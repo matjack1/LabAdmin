@@ -2,7 +2,7 @@ import datetime
 import json
 
 from django.contrib.auth.models import User
-from django.test import TestCase, Client, override_settings
+from django.test import TestCase, Client, RequestFactory, override_settings
 try:
     from django.urls import reverse
 except ImportError:
@@ -11,7 +11,7 @@ from django.utils import timezone, dateparse
 
 from .models import (
     Card, Group, LogAccess, Role, TimeSlot, UserProfile,
-    LogCredits, Category, Device, LogDevice, LogError
+    LogCredits, Category, Device, LogDevice, LogError, Sketch
 )
 
 
@@ -35,7 +35,9 @@ class TestLabAdmin(TestCase):
         devices_group.roles.add(full_devices_role)
 
         card = Card.objects.create(nfc_id=123456)
-        user = User.objects.create(username="alessandro.monaco")
+        user = User.objects.create_user(username="alessandro.monaco", password="password")
+        user.is_staff = True
+        user.save()
         u = UserProfile.objects.create(
             user=user,
             card=card,
@@ -46,7 +48,7 @@ class TestLabAdmin(TestCase):
         u.groups.add(devices_group)
 
         noperm_card = Card.objects.create(nfc_id=654321)
-        noperm_user = User.objects.create(username="nopermission")
+        noperm_user = User.objects.create_user(username="nopermission", password="password")
         noperm_up = UserProfile.objects.create(
             user=noperm_user,
             card=noperm_card,
@@ -347,6 +349,30 @@ class TestLabAdmin(TestCase):
             hourlyCost=self.device.hourlyCost,
         )
         self.assertIn('enter permitted', self.device.last_activity())
+
+    def test_render_device_sketch(self):
+        sketch = Sketch.objects.create(
+            name='nome sketch',
+            code='{{ device.name }} {{ user.name }}',
+            file_format='.ino',
+        )
+        category = Category.objects.create(
+            name="category"
+        )
+        device = Device.objects.create(
+            name='device',
+            hourlyCost=1.0,
+            category=category,
+            mac='00:00:00:00:00:00',
+        )
+        factory = RequestFactory()
+        request = factory.get('/admin/labAdmin/device/')
+        request.user = self.card.userprofile.user
+        response = sketch.render(device, request)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['Content-Type'], 'text/plain')
+        self.assertIn('filename="device-nome-sketch.ino"', response['Content-Disposition'])
+        self.assertContains(response, 'device Alessandro Monaco')
 
     def test_device_start_use(self):
         client = Client()
