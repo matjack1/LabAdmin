@@ -1,9 +1,30 @@
 from django.contrib import admin
-from labAdmin.models import *
+from labAdmin.models import (
+    Card,
+    Category,
+    Device,
+    Group,
+    LogAccess,
+    LogCredits,
+    LogDevice,
+    LogError,
+    Payment,
+    Role,
+    TimeSlot,
+    UserProfile,
+)
 
 
 class CardAdmin(admin.ModelAdmin):
-    list_display = ('nfc_id', 'credits')
+    list_display = ('nfc_id', 'user', 'credits')
+    search_fields = ('nfc_id', 'userprofile__user__username')
+    ordering = ('-nfc_id',)
+
+    def user(self, obj):
+        try:
+            return obj.userprofile.user
+        except AttributeError:
+            return 'n.d.'
 
     def save_model(self, request, obj, form, change):
         obj.save()
@@ -22,7 +43,7 @@ class UserProfileAdmin(admin.ModelAdmin):
 admin.site.register(UserProfile, UserProfileAdmin)
 
 class RoleAdmin(admin.ModelAdmin):
-    list_display = ('name', 'role_kind','valid',)
+    list_display = ('name', 'valid',)
     ordering = ('name',)
 
 admin.site.register(Role, RoleAdmin)
@@ -43,7 +64,7 @@ admin.site.register(Category, CategoryAdmin)
 
 
 class DeviceAdmin(admin.ModelAdmin):
-    list_display = ('name', 'hourlyCost', 'category', 'mac',)
+    list_display = ('name', 'hourlyCost', 'category', 'mac', 'last_activity')
     ordering = ('name',)
 
 admin.site.register(Device, DeviceAdmin)
@@ -56,8 +77,11 @@ admin.site.register(Payment, PaymentAdmin)
 
 
 class LogAccessAdmin(admin.ModelAdmin):
-    list_display = ('datetime', 'card', 'opened',)
+    list_display = ('datetime', 'user', 'card', 'opened',)
     ordering = ('-datetime', 'card',)
+
+    def user(self, obj):
+        return obj.users.first()
 
 admin.site.register(LogAccess,LogAccessAdmin)
 
