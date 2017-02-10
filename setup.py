@@ -14,9 +14,9 @@ setup(
     name='labAdmin',
     version=version,
     description="""A django app to manage your Fablab""",
-    author='Fablab Torino',
-    author_email='info@fablabtorino.org',
-    url='https://github.com/FablabTorino/LabAdmin',
+    author='Officine Torino',
+    author_email='d.gomba@officine.cc',
+    url='https://github.com/OfficineArduinoTorino/LabAdmin.git',
     packages=[
         'labAdmin',
     ],
