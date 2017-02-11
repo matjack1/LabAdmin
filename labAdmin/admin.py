@@ -77,7 +77,7 @@ admin.site.register(Payment, PaymentAdmin)
 
 
 class LogAccessAdmin(admin.ModelAdmin):
-    list_display = ('datetime', 'user', 'card', 'opened',)
+    list_display = ('datetime', 'user', 'card', 'opened', 'device')
     ordering = ('-datetime', 'card',)
 
     def user(self, obj):

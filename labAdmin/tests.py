@@ -119,7 +119,7 @@ class TestLabAdmin(TestCase):
         self.assertEqual(response_data['open'], self.userprofile.can_use_device_now(self.device))
 
         users = UserProfile.objects.all()
-        logaccess = LogAccess.objects.filter(users=users, card=self.card)
+        logaccess = LogAccess.objects.filter(users=users, card=self.card, device=self.device)
         self.assertTrue(logaccess.exists())
 
         response = client.post(url, data, format='json')
