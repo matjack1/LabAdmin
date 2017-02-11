@@ -68,18 +68,18 @@ class OpenDoorByNFC(APIView):
     permission_classes = (DeviceTokenPermission,)
 
     def post(self, request, format=None):
-        nfc_id = request.data.get('nfc_id')
-        try:
-            card = Card.objects.get(nfc_id=nfc_id)
-        except Card.DoesNotExist:
-            LogError(description="Api: Use Device - nfc ID not valid", code=nfc_id or '').save()
-            return Response("", status=status.HTTP_400_BAD_REQUEST)
-
         token = get_token_from_request(request)
         try:
             device = Device.objects.get(token=token)
         except Device.DoesNotExist:
             LogError(description="Api: Open Door By NFC - token not valid", code=token or '').save()
+            return Response("", status=status.HTTP_400_BAD_REQUEST)
+
+        nfc_id = request.data.get('nfc_id')
+        try:
+            card = Card.objects.get(nfc_id=nfc_id)
+        except Card.DoesNotExist:
+            LogError(description="Api: Open Door By Nfc - nfc ID not valid", code=nfc_id or '', device=device).save()
             return Response("", status=status.HTTP_400_BAD_REQUEST)
 
         user = card.userprofile
@@ -147,13 +147,6 @@ class DeviceStartUse(APIView):
     permission_classes = (DeviceTokenPermission,)
 
     def post(self, request, format=None):
-        nfc_id = request.data.get('nfc_id')
-        try:
-            card = Card.objects.get(nfc_id=nfc_id)
-        except Card.DoesNotExist:
-            LogError(description="Api: Use Device - nfc ID not valid", code=nfc_id or '').save()
-            return Response("", status=status.HTTP_400_BAD_REQUEST)
-
         token = get_token_from_request(request)
         try:
             device = Device.objects.get(token=token)
@@ -161,9 +154,16 @@ class DeviceStartUse(APIView):
             LogError(description="Api: Use Device - token not valid", code=token or '').save()
             return Response("", status=status.HTTP_400_BAD_REQUEST)
 
+        nfc_id = request.data.get('nfc_id')
+        try:
+            card = Card.objects.get(nfc_id=nfc_id)
+        except Card.DoesNotExist:
+            LogError(description="Api: Use Device - nfc ID not valid", code=nfc_id or '', device=device).save()
+            return Response("", status=status.HTTP_400_BAD_REQUEST)
+
         user = card.userprofile
         if not user.can_use_device_now(device):
-            LogError(description="Api: Use Device - card {} can't use device {}".format(nfc_id, token), device=device)
+            LogError(description="Api: Use Device - card {} can't use device {}".format(nfc_id, token), device=device).save()
             return Response("", status=status.HTTP_400_BAD_REQUEST)
 
         # cleanup leaked instances
@@ -196,18 +196,18 @@ class DeviceStopUse(APIView):
     permission_classes = (DeviceTokenPermission,)
 
     def post(self, request, format=None):
-        nfc_id = request.data.get('nfc_id')
-        try:
-            card = Card.objects.get(nfc_id=nfc_id)
-        except Card.DoesNotExist:
-            LogError(description="Api: Use Device - nfc ID not valid", code=nfc_id or '').save()
-            return Response("", status=status.HTTP_400_BAD_REQUEST)
-
         token = get_token_from_request(request)
         try:
             device = Device.objects.get(token=token)
         except Device.DoesNotExist:
-            LogError(description="Api: Use Device - token not valid", code=token or '').save()
+            LogError(description="Api: Stop use Device - token not valid", code=token or '').save()
+            return Response("", status=status.HTTP_400_BAD_REQUEST)
+
+        nfc_id = request.data.get('nfc_id')
+        try:
+            card = Card.objects.get(nfc_id=nfc_id)
+        except Card.DoesNotExist:
+            LogError(description="Api: Stop use Device - nfc ID not valid", code=nfc_id or '', device=device).save()
             return Response("", status=status.HTTP_400_BAD_REQUEST)
 
         user = card.userprofile
@@ -215,7 +215,7 @@ class DeviceStopUse(APIView):
             log = LogDevice.objects.get(device=device, user=user, inWorking=True)
         except LogDevice.DoesNotExist:
             code = "card {} for device with token {}".format(nfc_id, token)
-            LogError(description="Api: Use Device - no device log found", code=code, device=device).save()
+            LogError(description="Api: Stop use Device - no device log found", code=code, device=device).save()
             return Response("", status=status.HTTP_400_BAD_REQUEST)
 
         log.stop()
