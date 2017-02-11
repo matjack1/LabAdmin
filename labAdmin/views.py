@@ -78,7 +78,7 @@ class OpenDoorByNFC(APIView):
         token = get_token_from_request(request)
         try:
             device = Device.objects.get(token=token)
-        except Card.DoesNotExist:
+        except Device.DoesNotExist:
             LogError(description="Api: Open Door By NFC - token not valid", code=token or '').save()
             return Response("", status=status.HTTP_400_BAD_REQUEST)
 
@@ -157,7 +157,7 @@ class DeviceStartUse(APIView):
         token = get_token_from_request(request)
         try:
             device = Device.objects.get(token=token)
-        except Card.DoesNotExist:
+        except Device.DoesNotExist:
             LogError(description="Api: Use Device - token not valid", code=token or '').save()
             return Response("", status=status.HTTP_400_BAD_REQUEST)
 
@@ -206,7 +206,7 @@ class DeviceStopUse(APIView):
         token = get_token_from_request(request)
         try:
             device = Device.objects.get(token=token)
-        except Card.DoesNotExist:
+        except Device.DoesNotExist:
             LogError(description="Api: Use Device - token not valid", code=token or '').save()
             return Response("", status=status.HTTP_400_BAD_REQUEST)
 
