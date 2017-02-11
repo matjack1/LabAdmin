@@ -27,6 +27,7 @@ setup(
        'django-cors-middleware==1.3.1',
        'django-oauth-toolkit==0.10.0',
        'paho-mqtt>1,<2',
+       'Pillow',
     ],
     zip_safe=False,
     keywords='Fablab, lab, admin',
