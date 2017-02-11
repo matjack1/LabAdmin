@@ -122,15 +122,23 @@ class TestLabAdmin(TestCase):
         logaccess = LogAccess.objects.filter(users=users, card=self.card, device=self.device)
         self.assertTrue(logaccess.exists())
 
+        # no token
         response = client.post(url, data, format='json')
         self.assertEqual(response.status_code, 403)
 
+        # invalid token
+        invalid_auth = 'Token ------'
+        response = client.post(url, data, format='json', HTTP_AUTHORIZATION=invalid_auth)
+        self.assertEqual(response.status_code, 403)
+
+        # valid token, invalid data
         data = {
             'nfc_id': 0
         }
         response = client.post(url, data, format='json', HTTP_AUTHORIZATION=auth)
         self.assertEqual(response.status_code, 400)
 
+        # wrong http method
         response = client.get(url, HTTP_AUTHORIZATION=auth)
         self.assertEqual(response.status_code, 405)
 
@@ -236,6 +244,11 @@ class TestLabAdmin(TestCase):
         }
         response = client.post(url, data, HTTP_AUTHORIZATION=auth)
         self.assertEqual(response.status_code, 400)
+
+        # invalid token
+        invalid_auth = 'Token ------'
+        response = client.post(url, data, format='json', HTTP_AUTHORIZATION=invalid_auth)
+        self.assertEqual(response.status_code, 403)
 
         # no auth
         data = {
@@ -376,6 +389,11 @@ class TestLabAdmin(TestCase):
             LogDevice.objects.filter(device=self.device, user=self.userprofile, inWorking=True).count(), 1
         )
 
+        # invalid token
+        invalid_auth = 'Token ------'
+        response = client.post(url, data, format='json', HTTP_AUTHORIZATION=invalid_auth)
+        self.assertEqual(response.status_code, 403)
+
     def test_device_stop_use(self):
         client = Client()
         auth = 'Token {}'.format(self.device.token)
@@ -433,6 +451,11 @@ class TestLabAdmin(TestCase):
         self.assertJSONEqual(response.content.decode('utf-8'), {
             'cost': 0
         })
+
+        # invalid token
+        invalid_auth = 'Token ------'
+        response = client.post(url, data, format='json', HTTP_AUTHORIZATION=invalid_auth)
+        self.assertEqual(response.status_code, 403)
 
     def test_user_can_use_device_now(self):
         self.assertTrue(self.userprofile.can_use_device_now(self.device))
