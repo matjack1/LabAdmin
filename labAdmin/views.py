@@ -101,7 +101,7 @@ class OpenDoorByNFC(APIView):
             try:
                 mqtt_publish(MQTT_ENTRANCE_TOPIC, json.dumps(payload))
             except Exception as e:
-                LogError(description="Api: Open Door By NFC - failed to publish to mqtt", code=e).save()
+                LogError(description="Api: Open Door By NFC - failed to publish to mqtt", code=e, device=device).save()
 
         data = {
             "users": UserProfileSerializer(users, many=True).data,
@@ -163,7 +163,7 @@ class DeviceStartUse(APIView):
 
         user = card.userprofile
         if not user.can_use_device_now(device):
-            LogError(description="Api: Use Device - card {} can't use device {}".format(nfc_id, token))
+            LogError(description="Api: Use Device - card {} can't use device {}".format(nfc_id, token), device=device)
             return Response("", status=status.HTTP_400_BAD_REQUEST)
 
         # cleanup leaked instances
@@ -215,7 +215,7 @@ class DeviceStopUse(APIView):
             log = LogDevice.objects.get(device=device, user=user, inWorking=True)
         except LogDevice.DoesNotExist:
             code = "card {} for device with token {}".format(nfc_id, token)
-            LogError(description="Api: Use Device - no device log found", code=code).save()
+            LogError(description="Api: Use Device - no device log found", code=code, device=device).save()
             return Response("", status=status.HTTP_400_BAD_REQUEST)
 
         log.stop()

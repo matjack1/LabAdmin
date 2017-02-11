@@ -93,7 +93,7 @@ class LogDeviceAdmin(admin.ModelAdmin):
 admin.site.register(LogDevice, LogDeviceAdmin)
 
 class LogErrorAdmin(admin.ModelAdmin):
-    list_display = ('datetime', 'description', 'code',)
+    list_display = ('datetime', 'description', 'code', 'device')
     ordering = ('-datetime',)
 
 admin.site.register(LogError, LogErrorAdmin)

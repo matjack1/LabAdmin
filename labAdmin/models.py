@@ -167,8 +167,9 @@ class Payment(models.Model):
 
 class LogError(models.Model):
     datetime = models.DateTimeField(default=timezone.now)
-    description=models.CharField(max_length=200)
-    code=models.CharField(default='',blank=True,max_length=200)
+    description = models.CharField(max_length=200)
+    code = models.CharField(default='', blank=True, max_length=200)
+    device = models.ForeignKey(Device, null=True, blank=True)
 
 class LogAccessManager(models.Manager):
     def log(self, card, users, opened, device):
