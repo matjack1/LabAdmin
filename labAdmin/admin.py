@@ -36,6 +36,7 @@ admin.site.register(Card, CardAdmin)
 class UserProfileAdmin(admin.ModelAdmin):
     list_display = ('name', 'card', 'displaygroups','firstSignup', 'lastSignup', 'subscription')
     ordering = ('name','-needSubscription','-endSubscription') # The negative sign indicate descendent order
+    search_fields = ('card__nfc_id', 'name', 'user__username',)
 
     def subscription(self, obj):
         return obj.endSubscription if obj.needSubscription else "lifetime membership"
