@@ -199,6 +199,9 @@ upstream backenddjango {
 }
 
 server {
+    location /labadmin/static {
+        alias /var/www/labadmin/labadmin/static;
+    }
     location /labadmin {
         proxy_pass http://backenddjango;
         proxy_http_version 1.1;
