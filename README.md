@@ -2,9 +2,13 @@
 
 Manage user rights to access the lab and the machines
 
+## Tutorial
+
+If you are going to deploy labAdmin from scratch on a new Django installation follow the [Tutorial](docs/tutorial.md)
+
 ## Quickstart
 
-Install the labAdmin:
+Install labAdmin:
 
 ```
 python setup.py install
