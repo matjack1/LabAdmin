@@ -82,7 +82,7 @@ class LogAccessAdmin(admin.ModelAdmin):
     ordering = ('-datetime', 'card',)
 
     def user(self, obj):
-        return obj.users.first()
+        return obj.card.userprofile
 
 admin.site.register(LogAccess,LogAccessAdmin)
 

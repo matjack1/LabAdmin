@@ -118,8 +118,7 @@ class TestLabAdmin(TestCase):
         self.assertIn('datetime', response_data)
         self.assertEqual(response_data['open'], self.userprofile.can_use_device_now(self.device))
 
-        users = UserProfile.objects.all()
-        logaccess = LogAccess.objects.filter(users=users, card=self.card, device=self.device)
+        logaccess = LogAccess.objects.filter(card=self.card, device=self.device)
         self.assertTrue(logaccess.exists())
 
         # no token
@@ -505,7 +504,6 @@ class TestLabAdmin(TestCase):
     def test_logaccess_print(self):
         log = LogAccess.objects.log(
             card=self.card,
-            users=[self.card.userprofile],
             opened=False,
             device=self.device
         )
@@ -513,7 +511,6 @@ class TestLabAdmin(TestCase):
 
         log = LogAccess.objects.log(
             card=self.card,
-            users=[self.card.userprofile],
             opened=True,
             device=self.device
         )

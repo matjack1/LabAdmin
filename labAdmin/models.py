@@ -172,15 +172,13 @@ class LogError(models.Model):
     device = models.ForeignKey(Device, null=True, blank=True)
 
 class LogAccessManager(models.Manager):
-    def log(self, card, users, opened, device):
+    def log(self, card, opened, device):
         l = LogAccess.objects.create(card=card, opened=opened, device=device)
-        l.users.add(*users)
         return l
 
 class LogAccess(models.Model):
     datetime = models.DateTimeField(default=timezone.now)
     card = models.ForeignKey(Card)
-    users = models.ManyToManyField(UserProfile)
     opened = models.BooleanField(default=False)
     device = models.ForeignKey(Device, null=True, blank=True)
 
