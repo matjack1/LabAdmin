@@ -25,7 +25,6 @@ from rest_framework import status
 
 from oauth2_provider.models import AccessToken
 
-from . import functions
 from .notifications import mqtt_publish
 from .permissions import (
     get_token_from_request, DeviceTokenPermission
@@ -110,28 +109,6 @@ class OpenDoorByNFC(APIView):
             "open": log_access.opened
         }
         return Response(data, status=status.HTTP_201_CREATED)
-
-class GetDeviceByMac(APIView):
-    """
-    API for getting informations about a Device that use a NIC
-    In order to use this API send a POST with a value named 'mac'
-    The return value is a json array with:
-        'id': id of device
-        'name': name of device
-    These values must be saved on client cache
-
-    If the MAC isn't correct or vaild, the API save in 'LogError' a new error that contains the error then return an alert message to client
-    (HTTP_400_BAD_REQUEST)
-    """
-    def post(self, request, format=None):
-        mac = request.data.get("mac")
-        d = functions.get_device_by_mac_or_None(mac=mac)
-
-        if d is None:
-            LogError(description="Api: Get Device By Mac - Mac not valid",code=mac)
-            return Response("",status=status.HTTP_400_BAD_REQUEST)
-
-        return Response({"id":d.id,"name":d.name},status=status.HTTP_200_OK)
 
 
 class DeviceStartUse(APIView):
