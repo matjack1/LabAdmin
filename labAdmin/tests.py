@@ -118,8 +118,7 @@ class TestLabAdmin(TestCase):
         self.assertIn('datetime', response_data)
         self.assertEqual(response_data['open'], self.userprofile.can_use_device_now(self.device))
 
-        users = UserProfile.objects.all()
-        logaccess = LogAccess.objects.filter(users=users, card=self.card, device=self.device)
+        logaccess = LogAccess.objects.filter(card=self.card, device=self.device)
         self.assertTrue(logaccess.exists())
 
         # no token
@@ -331,6 +330,24 @@ class TestLabAdmin(TestCase):
         self.assertFalse(logdevice.inWorking)
         self.assertEqual(self.device.last_activity(), logdevice.finishWork)
 
+    def test_device_last_activity_with_logaccess(self):
+        logaccess = LogAccess.objects.log(
+            card=self.card,
+            opened=True,
+            device=self.device
+        )
+        now = timezone.now()
+        logdevice = LogDevice.objects.create(
+            device=self.device,
+            user=self.userprofile,
+            bootDevice=now,
+            startWork=now,
+            shutdownDevice=now,
+            finishWork=now,
+            hourlyCost=self.device.hourlyCost,
+        )
+        self.assertIn('enter permitted', self.device.last_activity())
+
     def test_device_start_use(self):
         client = Client()
         auth = 'Token {}'.format(self.device.token)
@@ -501,6 +518,21 @@ class TestLabAdmin(TestCase):
         group.roles.add(role)
         self.noperm_userprofile.groups.add(group)
         self.assertFalse(self.noperm_userprofile.can_use_device_now(self.device))
+
+    def test_logaccess_print(self):
+        log = LogAccess.objects.log(
+            card=self.card,
+            opened=False,
+            device=self.device
+        )
+        self.assertIn('enter not permitted', str(log))
+
+        log = LogAccess.objects.log(
+            card=self.card,
+            opened=True,
+            device=self.device
+        )
+        self.assertIn('enter permitted', str(log))
 
 
 class TimeSlotTests(TestCase):

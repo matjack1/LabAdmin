@@ -85,7 +85,7 @@ class OpenDoorByNFC(APIView):
         user = card.userprofile
         can_open = user.can_use_device_now(device)
         users = UserProfile.objects.filter(pk=user.pk)
-        log_access = LogAccess.objects.log(users=users, card=card, opened=can_open, device=device)
+        log_access = LogAccess.objects.log(card=card, opened=can_open, device=device)
         users_pks = users.values_list('pk', flat=True)
         if Group.objects.filter(userprofile__in=users_pks, name__icontains='Fablab').exists():
             utype = "fablab"

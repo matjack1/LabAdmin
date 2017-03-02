@@ -148,6 +148,9 @@ class Device(models.Model):
         return "%010d - %s" %(self.id, self.name)
 
     def last_activity(self):
+        logaccess = self.logaccess_set.order_by('-id').first()
+        if logaccess:
+            return str(logaccess)
         logdevice = self.logdevice_set.order_by('-id').first()
         if not logdevice:
             return ''
@@ -172,22 +175,22 @@ class LogError(models.Model):
     device = models.ForeignKey(Device, null=True, blank=True)
 
 class LogAccessManager(models.Manager):
-    def log(self, card, users, opened, device):
+    def log(self, card, opened, device):
         l = LogAccess.objects.create(card=card, opened=opened, device=device)
-        l.users.add(*users)
         return l
 
 class LogAccess(models.Model):
     datetime = models.DateTimeField(default=timezone.now)
     card = models.ForeignKey(Card)
-    users = models.ManyToManyField(UserProfile)
     opened = models.BooleanField(default=False)
     device = models.ForeignKey(Device, null=True, blank=True)
 
     objects= LogAccessManager()
 
     def __str__(self):
-        return "%s Enter in Fablab it %s: Enter %sPermitted" % (self.card, self.datetime, "Not " if not self.opened else "")
+        return "{:%d/%m/%Y %H:%M} {} enter {}permitted".format(
+            self.datetime, self.card.userprofile, "" if self.opened else "not "
+        )
 
 class LogDevice(models.Model):
     hourlyCost=models.FloatField(default=0.0)
