@@ -148,6 +148,9 @@ class Device(models.Model):
         return "%010d - %s" %(self.id, self.name)
 
     def last_activity(self):
+        logaccess = self.logaccess_set.order_by('-id').first()
+        if logaccess:
+            return str(logaccess)
         logdevice = self.logdevice_set.order_by('-id').first()
         if not logdevice:
             return ''

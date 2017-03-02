@@ -330,6 +330,24 @@ class TestLabAdmin(TestCase):
         self.assertFalse(logdevice.inWorking)
         self.assertEqual(self.device.last_activity(), logdevice.finishWork)
 
+    def test_device_last_activity_with_logaccess(self):
+        logaccess = LogAccess.objects.log(
+            card=self.card,
+            opened=True,
+            device=self.device
+        )
+        now = timezone.now()
+        logdevice = LogDevice.objects.create(
+            device=self.device,
+            user=self.userprofile,
+            bootDevice=now,
+            startWork=now,
+            shutdownDevice=now,
+            finishWork=now,
+            hourlyCost=self.device.hourlyCost,
+        )
+        self.assertIn('enter permitted', self.device.last_activity())
+
     def test_device_start_use(self):
         client = Client()
         auth = 'Token {}'.format(self.device.token)
