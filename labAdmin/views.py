@@ -68,24 +68,24 @@ class OpenDoorByNFC(APIView):
     permission_classes = (DeviceTokenPermission,)
 
     def post(self, request, format=None):
+        token = get_token_from_request(request)
+        try:
+            device = Device.objects.get(token=token)
+        except Device.DoesNotExist:
+            LogError(description="Api: Open Door By NFC - token not valid", code=token or '').save()
+            return Response("", status=status.HTTP_400_BAD_REQUEST)
+
         nfc_id = request.data.get('nfc_id')
         try:
             card = Card.objects.get(nfc_id=nfc_id)
         except Card.DoesNotExist:
-            LogError(description="Api: Use Device - nfc ID not valid", code=nfc_id or '').save()
-            return Response("", status=status.HTTP_400_BAD_REQUEST)
-
-        token = get_token_from_request(request)
-        try:
-            device = Device.objects.get(token=token)
-        except Card.DoesNotExist:
-            LogError(description="Api: Open Door By NFC - token not valid", code=token or '').save()
+            LogError(description="Api: Open Door By Nfc - nfc ID not valid", code=nfc_id or '', device=device).save()
             return Response("", status=status.HTTP_400_BAD_REQUEST)
 
         user = card.userprofile
         can_open = user.can_use_device_now(device)
         users = UserProfile.objects.filter(pk=user.pk)
-        log_access = LogAccess.objects.log(users=users, card=card, opened=can_open)
+        log_access = LogAccess.objects.log(users=users, card=card, opened=can_open, device=device)
         users_pks = users.values_list('pk', flat=True)
         if Group.objects.filter(userprofile__in=users_pks, name__icontains='Fablab').exists():
             utype = "fablab"
@@ -101,7 +101,7 @@ class OpenDoorByNFC(APIView):
             try:
                 mqtt_publish(MQTT_ENTRANCE_TOPIC, json.dumps(payload))
             except Exception as e:
-                LogError(description="Api: Open Door By NFC - failed to publish to mqtt", code=e).save()
+                LogError(description="Api: Open Door By NFC - failed to publish to mqtt", code=e, device=device).save()
 
         data = {
             "users": UserProfileSerializer(users, many=True).data,
@@ -147,23 +147,23 @@ class DeviceStartUse(APIView):
     permission_classes = (DeviceTokenPermission,)
 
     def post(self, request, format=None):
+        token = get_token_from_request(request)
+        try:
+            device = Device.objects.get(token=token)
+        except Device.DoesNotExist:
+            LogError(description="Api: Use Device - token not valid", code=token or '').save()
+            return Response("", status=status.HTTP_400_BAD_REQUEST)
+
         nfc_id = request.data.get('nfc_id')
         try:
             card = Card.objects.get(nfc_id=nfc_id)
         except Card.DoesNotExist:
-            LogError(description="Api: Use Device - nfc ID not valid", code=nfc_id or '').save()
-            return Response("", status=status.HTTP_400_BAD_REQUEST)
-
-        token = get_token_from_request(request)
-        try:
-            device = Device.objects.get(token=token)
-        except Card.DoesNotExist:
-            LogError(description="Api: Use Device - token not valid", code=token or '').save()
+            LogError(description="Api: Use Device - nfc ID not valid", code=nfc_id or '', device=device).save()
             return Response("", status=status.HTTP_400_BAD_REQUEST)
 
         user = card.userprofile
         if not user.can_use_device_now(device):
-            LogError(description="Api: Use Device - card {} can't use device {}".format(nfc_id, token))
+            LogError(description="Api: Use Device - card {} can't use device {}".format(nfc_id, token), device=device).save()
             return Response("", status=status.HTTP_400_BAD_REQUEST)
 
         # cleanup leaked instances
@@ -196,18 +196,18 @@ class DeviceStopUse(APIView):
     permission_classes = (DeviceTokenPermission,)
 
     def post(self, request, format=None):
+        token = get_token_from_request(request)
+        try:
+            device = Device.objects.get(token=token)
+        except Device.DoesNotExist:
+            LogError(description="Api: Stop use Device - token not valid", code=token or '').save()
+            return Response("", status=status.HTTP_400_BAD_REQUEST)
+
         nfc_id = request.data.get('nfc_id')
         try:
             card = Card.objects.get(nfc_id=nfc_id)
         except Card.DoesNotExist:
-            LogError(description="Api: Use Device - nfc ID not valid", code=nfc_id or '').save()
-            return Response("", status=status.HTTP_400_BAD_REQUEST)
-
-        token = get_token_from_request(request)
-        try:
-            device = Device.objects.get(token=token)
-        except Card.DoesNotExist:
-            LogError(description="Api: Use Device - token not valid", code=token or '').save()
+            LogError(description="Api: Stop use Device - nfc ID not valid", code=nfc_id or '', device=device).save()
             return Response("", status=status.HTTP_400_BAD_REQUEST)
 
         user = card.userprofile
@@ -215,7 +215,7 @@ class DeviceStopUse(APIView):
             log = LogDevice.objects.get(device=device, user=user, inWorking=True)
         except LogDevice.DoesNotExist:
             code = "card {} for device with token {}".format(nfc_id, token)
-            LogError(description="Api: Use Device - no device log found", code=code).save()
+            LogError(description="Api: Stop use Device - no device log found", code=code, device=device).save()
             return Response("", status=status.HTTP_400_BAD_REQUEST)
 
         log.stop()
@@ -274,11 +274,18 @@ class CardCredits(APIView):
     permission_classes = (DeviceTokenPermission,)
 
     def get(self, request, format=None):
+        token = get_token_from_request(request)
+        try:
+            device = Device.objects.get(token=token)
+        except Device.DoesNotExist:
+            LogError(description="Api: Update Card Credits - token not valid", code=token or '').save()
+            return Response("", status=status.HTTP_400_BAD_REQUEST)
+
         nfc = request.query_params.get('nfc_id')
         try:
             card = Card.objects.get(nfc_id=nfc)
         except Card.DoesNotExist:
-            LogError(description="Api: Update Card Credits - NFC not Valid", code=nfc or '').save()
+            LogError(description="Api: Update Card Credits - NFC not Valid", code=nfc or '', device=device).save()
             return Response("", status=status.HTTP_400_BAD_REQUEST)
         return Response(CardSerializer(card).data, status=status.HTTP_200_OK)
 
@@ -294,10 +301,17 @@ class CardCredits(APIView):
     If the amount or the nfc code isn't valid a 'LogError' instance is saved and status code 400 returned
     """
     def post(self, request, format=None):
+        token = get_token_from_request(request)
+        try:
+            device = Device.objects.get(token=token)
+        except Device.DoesNotExist:
+            LogError(description="Api: Update Card Credits - token not valid", code=token or '').save()
+            return Response("", status=status.HTTP_400_BAD_REQUEST)
+
         serializer = CardUpdateSerializer(data=request.data)
         nfc = serializer.initial_data.get('nfc_id')
         if not serializer.is_valid():
-            LogError(description="Api: Update Card Credits - Invalid data", code=nfc or '').save()
+            LogError(description="Api: Update Card Credits - Invalid data", code=nfc or '', device=device).save()
             return Response("", status=status.HTTP_400_BAD_REQUEST)
 
         try:
@@ -306,7 +320,7 @@ class CardCredits(APIView):
                 try:
                     card = Card.objects.get(nfc_id=nfc)
                 except Card.DoesNotExist:
-                    LogError(description="Api: Update Card Credits - NFC not Valid", code=nfc).save()
+                    LogError(description="Api: Update Card Credits - NFC not Valid", code=nfc, device=device).save()
                     return Response("", status=status.HTTP_400_BAD_REQUEST)
 
                 amount = serializer.data['amount']
@@ -314,7 +328,7 @@ class CardCredits(APIView):
                     msg = "Api: Update Card Credits - amount can only be negative: {}".format(
                         amount
                     )
-                    LogError(description=msg, code=nfc).save()
+                    LogError(description=msg, code=nfc, device=device).save()
                     return Response("", status=status.HTTP_400_BAD_REQUEST)
 
                 new_amount = card.credits + amount
@@ -322,7 +336,7 @@ class CardCredits(APIView):
                     msg = "Api: Update Card Credits - Not enough credits: requested {} of {} available".format(
                         amount, card.credits
                     )
-                    LogError(description=msg, code=nfc).save()
+                    LogError(description=msg, code=nfc, device=device).save()
                     return Response("", status=status.HTTP_403_FORBIDDEN)
 
                 # update the card with the new credits amount
@@ -332,7 +346,7 @@ class CardCredits(APIView):
                 card.log_credits_update(amount=amount, user=user)
 
         except IntegrityError:
-            LogError(description="Api: Update Card Credits - IntegrityError", code=nfc).save()
+            LogError(description="Api: Update Card Credits - IntegrityError", code=nfc, device=device).save()
             return Response("", status=status.HTTP_400_BAD_REQUEST)
 
         return Response(CardSerializer(card).data, status=status.HTTP_200_OK)

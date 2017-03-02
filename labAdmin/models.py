@@ -60,7 +60,7 @@ class Card(models.Model):
             card=self,
             amount=amount,
             user=user,
-            from_admin=from_admin
+            from_admin=from_admin,
         )
 
 
@@ -167,12 +167,13 @@ class Payment(models.Model):
 
 class LogError(models.Model):
     datetime = models.DateTimeField(default=timezone.now)
-    description=models.CharField(max_length=200)
-    code=models.CharField(default='',blank=True,max_length=200)
+    description = models.CharField(max_length=200)
+    code = models.CharField(default='', blank=True, max_length=200)
+    device = models.ForeignKey(Device, null=True, blank=True)
 
 class LogAccessManager(models.Manager):
-    def log(self, card, users, opened):
-        l = LogAccess.objects.create(card=card, opened=opened)
+    def log(self, card, users, opened, device):
+        l = LogAccess.objects.create(card=card, opened=opened, device=device)
         l.users.add(*users)
         return l
 
@@ -181,6 +182,7 @@ class LogAccess(models.Model):
     card = models.ForeignKey(Card)
     users = models.ManyToManyField(UserProfile)
     opened = models.BooleanField(default=False)
+    device = models.ForeignKey(Device, null=True, blank=True)
 
     objects= LogAccessManager()
 

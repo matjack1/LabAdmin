@@ -78,7 +78,7 @@ admin.site.register(Payment, PaymentAdmin)
 
 
 class LogAccessAdmin(admin.ModelAdmin):
-    list_display = ('datetime', 'user', 'card', 'opened',)
+    list_display = ('datetime', 'user', 'card', 'opened', 'device')
     ordering = ('-datetime', 'card',)
 
     def user(self, obj):
@@ -94,7 +94,7 @@ class LogDeviceAdmin(admin.ModelAdmin):
 admin.site.register(LogDevice, LogDeviceAdmin)
 
 class LogErrorAdmin(admin.ModelAdmin):
-    list_display = ('datetime', 'description', 'code',)
+    list_display = ('datetime', 'description', 'code', 'device')
     ordering = ('-datetime',)
 
 admin.site.register(LogError, LogErrorAdmin)
