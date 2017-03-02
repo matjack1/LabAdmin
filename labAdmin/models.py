@@ -187,7 +187,9 @@ class LogAccess(models.Model):
     objects= LogAccessManager()
 
     def __str__(self):
-        return "%s Enter in Fablab it %s: Enter %sPermitted" % (self.card, self.datetime, "Not " if not self.opened else "")
+        return "{:%d/%m/%Y %H:%M} {} enter {}permitted".format(
+            self.datetime, self.card.userprofile, "" if self.opened else "not "
+        )
 
 class LogDevice(models.Model):
     hourlyCost=models.FloatField(default=0.0)

@@ -502,6 +502,23 @@ class TestLabAdmin(TestCase):
         self.noperm_userprofile.groups.add(group)
         self.assertFalse(self.noperm_userprofile.can_use_device_now(self.device))
 
+    def test_logaccess_print(self):
+        log = LogAccess.objects.log(
+            card=self.card,
+            users=[self.card.userprofile],
+            opened=False,
+            device=self.device
+        )
+        self.assertIn('enter not permitted', str(log))
+
+        log = LogAccess.objects.log(
+            card=self.card,
+            users=[self.card.userprofile],
+            opened=True,
+            device=self.device
+        )
+        self.assertIn('enter permitted', str(log))
+
 
 class TimeSlotTests(TestCase):
     def test_timeslot_manager_now(self):
