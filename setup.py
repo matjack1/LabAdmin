@@ -31,6 +31,7 @@ setup(
     ],
     zip_safe=False,
     keywords='Fablab, lab, admin',
+    license='MIT',
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Framework :: Django',
