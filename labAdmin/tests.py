@@ -573,6 +573,37 @@ class TestLabAdmin(TestCase):
         )
         self.assertIn('enter permitted', str(log))
 
+    def test_user_profile_view_no_login(self):
+        url = reverse('labadmin-user-profile')
+        response = self.client.get(url)
+        self.assertRedirects(response, '/accounts/login/?next={}'.format(url))
+
+    def test_user_profile_view_update(self):
+        url = reverse('labadmin-user-profile')
+        self.client.login(username='alessandro.monaco', password='password')
+
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Alessandro Monaco')
+
+        data = {
+            'name': 'Ciccio Pasticcio',
+            'address': 'some address',
+            'tax_code': '456',
+            'vat_id': '123',
+            'bio': 'A poignant bio',
+        }
+        response = self.client.post(url, data)
+        self.assertRedirects(response, url)
+
+        response = self.client.get(url)
+        self.assertContains(response, 'Ciccio Pasticcio')
+        self.assertContains(response, 'some address')
+        self.assertContains(response, '456')
+        self.assertContains(response, '123')
+        self.assertContains(response, 'A poignant bio')
+        self.client.logout()
+
 
 class TimeSlotTests(TestCase):
     def test_timeslot_manager_now(self):

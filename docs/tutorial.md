@@ -11,9 +11,11 @@ First we are going to install all requirements.
 Please note that *mysql-server* will require a password for the root user that you'll need later.
 
 ```
-sudo apt install build-essential python3 python3-dev libjpeg-dev libmysqlclient-dev git mysql-server nginx
+sudo apt install build-essential python3 python3-dev libjpeg-dev libmysqlclient-dev git mysql-server nginx postfix libsasl2-2 libsasl2-modules
 sudo apt-get clean
 ```
+
+### Mysql
 
 In order to setup the mysql database we need to enter the mysql shell, youl'll be asked the root user password:
 
@@ -29,6 +31,49 @@ create database labadmin;
 CREATE USER 'labadmin'@'localhost' IDENTIFIED BY 'apasswordforlabadmin';
 GRANT ALL PRIVILEGES ON labadmin.* TO 'labadmin'@'localhost';
 FLUSH PRIVILEGES;
+```
+
+### Postfix
+
+Postfix is needed for sending email, but it won't sending email on its own. Postfix will only relay the email to another SMTP server you need to have an account on.
+When installing Postfix you'll be asked how to configure it, please select *Satellite System*. Then use the provided defaults for the other configuration questions.
+
+Once the installation is done we need to tune some parameters in its config file */etc/postfix/main.cf*:
+
+```
+# smtp server address and port we'll use as relay
+relayhost = [smtp.smtpserver]:port
+```
+
+And just copy bunch of options:
+
+```
+smtp_use_tls = yes
+smtp_sasl_auth_enable = yes
+smtp_sasl_password_maps = hash:/etc/postfix/sasl/sasl_passwd
+smtp_sasl_security_options = noanonymous
+smtp_sasl_tls_security_options = noanonymous
+```
+
+Then we need to create the credentials for the relay SMTP server in a file called */etc/postfix/sasl/sasl_passwd*:
+
+```
+[smtp.smtpserver] username:password
+```
+
+Execute the following commands to inizialize the credentials and set proper permissions:
+
+```
+sudo postmap /etc/postfix/sasl/sasl_passwd
+chown -R root:postfix /etc/postfix/sasl
+chmod 750 /etc/postfix/sasl
+chmod 640 /etc/postfix/sasl/sasl_passwd*
+```
+
+Finally restart Postfix with the new settings:
+
+```
+sudo service postfix restart
 ```
 
 ## LabAdmin
@@ -86,6 +131,7 @@ We need to add the needed apps:
 ```
 INSTALLED_APPS = [
     # ...
+    'django.contrib.sites',
     'rest_framework',
     'oauth2_provider',
     'corsheaders',
@@ -104,13 +150,20 @@ MIDDLEWARE_CLASSES = [
 ]
 ```
 
-Then we need to setup the path for uploaded files, and various urls:
+Then we need to setup the path for uploaded files, various urls and how long registration links are valid:
 
 ```
 MEDIA_ROOT = '/var/www/labadmin/labadmin/uploads/'
 STATIC_ROOT = '/var/www/labadmin/labadmin/static/'
 STATIC_URL = '/labadmin/static/'
 LOGIN_URL = '/labadmin/accounts/login/'
+LOGIN_REDIRECT_URL = 'labadmin-user-profile'
+
+# how many days the registration link will be valid
+ACCOUNT_ACTIVATION_DAYS = 2
+
+# id of default django.contrib.site.models.Site
+SITE_ID = 1
 ```
 
 You also need to update these settings dependings on your environment:
@@ -149,6 +202,7 @@ labadminpatterns = [
     url(r'^accounts/password_reset/done/$', auth_views.password_reset_done, name='password_reset_done'),
     url(r'^accounts/reset/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$', auth_views.password_reset_confirm, name='password_reset_confirm'),
     url(r'^accounts/reset/done/$', auth_views.password_reset_complete, name='password_reset_complete'),
+    url(r'^accounts/', include('registration.backends.hmac.urls')),
 ]
 
 urlpatterns = [
@@ -226,4 +280,5 @@ sudo service nginx configtest
 sudo service nginx reload
 ```
 
-Now *LabAdmin* admin interface should be reachable at your server ip [*/labadmin/admin*](http://127.0.0.1/labadmin/path) path.
+Now *LabAdmin* admin interface should be reachable at your server ip [*/labadmin/admin*](http://127.0.0.1/labadmin/admin) path.
+Log in the *LabAdmin* admin and update your *Site* domain (an ip address is fine too) and name to match the address it would reachable from outside.

@@ -1,12 +1,18 @@
 import json
 
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 from django.http import Http404
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from django.utils.translation import ugettext as _
 from django.db import transaction, IntegrityError
 from django.conf import settings
 from django.utils import timezone
+from django.utils.decorators import method_decorator
+from django.views.generic import View
+from django.views.generic.base import TemplateResponseMixin
 
+from labAdmin.forms import UserProfileForm
 from labAdmin.serializers import (
     UserProfileSerializer, CardSerializer, CardUpdateSerializer
 )
@@ -327,3 +333,35 @@ class CardCredits(APIView):
             return Response("", status=status.HTTP_400_BAD_REQUEST)
 
         return Response(CardSerializer(card).data, status=status.HTTP_200_OK)
+
+
+class UserProfileView(TemplateResponseMixin, View):
+    template_name = 'labadmin/userprofile.html'
+
+    def get(self, request, *args, **kwargs):
+        try:
+            up = request.user.userprofile
+        except UserProfile.DoesNotExist:
+            up = None
+        form = UserProfileForm(instance=up)
+        return self.render_to_response({'form': form})
+
+    def post(self, request, *args, **kwargs):
+        try:
+            up = request.user.userprofile
+        except UserProfile.DoesNotExist:
+            up = None
+        form = UserProfileForm(request.POST, instance=up)
+        if form.is_valid():
+            up = form.save(commit=False)
+            up.user = request.user
+            if not up.endSubscription:
+                up.endSubscription = timezone.now()
+            up.save()
+            messages.add_message(request, messages.INFO, 'Profile updated correctly')
+            return redirect('labadmin-user-profile')
+        return self.render_to_response({'form': form})
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(UserProfileView, self).dispatch(*args, **kwargs)

@@ -26,6 +26,7 @@ setup(
        'djangorestframework>3,<4',
        'django-cors-middleware==1.3.1',
        'django-oauth-toolkit==0.10.0',
+       'django-registration>=2.2,<3',
        'paho-mqtt>1,<2',
        'Pillow',
     ],
