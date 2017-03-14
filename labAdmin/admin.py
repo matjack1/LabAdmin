@@ -1,4 +1,5 @@
 from django.contrib import admin
+
 from labAdmin.models import (
     Card,
     Category,
@@ -10,9 +11,12 @@ from labAdmin.models import (
     LogError,
     Payment,
     Role,
+    Sketch,
     TimeSlot,
     UserProfile,
 )
+
+from .forms import DeviceActionForm
 
 
 class CardAdmin(admin.ModelAdmin):
@@ -63,12 +67,30 @@ class CategoryAdmin(admin.ModelAdmin):
 
 admin.site.register(Category, CategoryAdmin)
 
+class SketchAdmin(admin.ModelAdmin):
+    list_display = ('name',)
+    ordering = ('name',)
+
+admin.site.register(Sketch, SketchAdmin)
+
 
 class DeviceAdmin(admin.ModelAdmin):
     list_display = ('name', 'hourlyCost', 'category', 'mac', 'last_activity')
     ordering = ('name',)
+    action_form = DeviceActionForm
+    actions = ['render_sketch_for_device']
+
+    def render_sketch_for_device(self, request, queryset):
+        if queryset.count() > 1:
+            messages.error(request, 'Only one device sketch can be rendered at a time')
+            return
+        sketch_id = request.POST['sketch']
+        sketch = Sketch.objects.get(pk=sketch_id)
+        device = queryset.first()
+        return sketch.render(device, request)
 
 admin.site.register(Device, DeviceAdmin)
+
 
 class PaymentAdmin(admin.ModelAdmin):
     list_display = ('date', 'value', 'user',)

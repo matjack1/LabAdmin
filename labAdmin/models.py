@@ -1,6 +1,10 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.http import HttpResponse
+from django.template import Template, Context
 from django.utils import timezone
+from django.utils.text import slugify
+
 import decimal
 import uuid
 
@@ -136,6 +140,30 @@ class Role(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class Sketch(models.Model):
+    name = models.CharField(max_length=100)
+    code = models.TextField()
+    file_format = models.CharField(max_length=10, default='.txt')
+
+    def __str__(self):
+        return self.name
+
+    def render(self, device, request):
+        t = Template(self.code)
+        c = Context({'device': device, 'user': request.user.userprofile})
+        data = t.render(c)
+        slug = slugify('{} {}'.format(device.name, self.name))
+        filename = '{}{}'.format(slug, self.file_format)
+
+        response = HttpResponse(data, content_type='text/plain')
+        response['Content-Disposition'] = 'attachment; filename="{}"'.format(filename)
+        return response
+
+    class Meta:
+        verbose_name_plural = 'Sketches'
+
 
 class Device(models.Model):
     name = models.CharField(max_length=100)
