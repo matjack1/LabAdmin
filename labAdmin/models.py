@@ -255,7 +255,7 @@ class LogCredits(models.Model):
     from_admin = models.BooleanField(default=False)
 
     def __str__(self):
-        if from_admin:
+        if self.from_admin:
             return '{} {} set credits for card {} to {} from admin'.format(
                 self.datetime,
                 self.user,
@@ -264,7 +264,7 @@ class LogCredits(models.Model):
             )
         return '{} {} updated credits for card {} by {}'.format(
             self.datetime,
-            self.user if user else '<AnonymousUser>',
+            self.user if self.user else '<AnonymousUser>',
             self.card,
             self.amount
         )

@@ -258,6 +258,19 @@ class TestLabAdmin(TestCase):
         response = client.post(url, data)
         self.assertEqual(response.status_code, 403)
 
+    def test_logcredits_str(self):
+        logcredits = LogCredits.objects.create(
+            card=self.card,
+            amount=10,
+            user=self.userprofile.user,
+            from_admin=False
+        )
+        self.assertIn('updated credits for card', str(logcredits))
+
+        logcredits.from_admin = True
+        logcredits.save()
+        self.assertIn('set credits for card', str(logcredits))
+
     def test_device_token_creation(self):
         category = Category.objects.create(
             name="category"
