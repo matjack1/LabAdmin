@@ -1,4 +1,4 @@
-from django.contrib import admin
+from django.contrib import admin, messages
 
 from labAdmin.models import (
     Card,
@@ -82,7 +82,7 @@ class DeviceAdmin(admin.ModelAdmin):
 
     def render_sketch_for_device(self, request, queryset):
         if queryset.count() > 1:
-            messages.error(request, 'Only one device sketch can be rendered at a time')
+            self.message_user(request, 'Only one device sketch can be rendered at a time', level=messages.ERROR)
             return
         sketch_id = request.POST['sketch']
         sketch = Sketch.objects.get(pk=sketch_id)
