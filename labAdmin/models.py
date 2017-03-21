@@ -5,7 +5,6 @@ from django.template import Template, Context
 from django.utils import timezone
 from django.utils.text import slugify
 
-import decimal
 import uuid
 
 
