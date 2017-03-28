@@ -2,9 +2,12 @@
 
 Manage user rights to access the lab and the machines
 
-## Tutorial
+## Installation
 
-If you are going to deploy labAdmin from scratch on a new Django installation follow the [Tutorial](docs/tutorial.md)
+If you are going to deploy labAdmin from scratch on a new Django installation you have two choices:
+
+- follow the [Tutorial](docs/tutorial.md)
+- use the [Ansible role ](https://github.com/OfficineArduinoTorino/ansible-labadmin/)
 
 ## Quickstart
 
