@@ -183,6 +183,9 @@ DATABASES = {
 # these depends on where the machine is
 LANGUAGE_CODE = 'it-it'
 TIME_ZONE = 'Europe/Rome'
+
+# email will be sent with this address in the from field
+DEFAULT_FROM_EMAIL = 'myemail@mydomain.com'
 ```
 
 We are done with django *settings.py*, it's time to add to *labadmin/labadmin/urls.py*:
