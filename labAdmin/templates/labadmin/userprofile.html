@@ -18,6 +18,10 @@
     {{ form.name.label_tag }} {{ form.name }}
   </div>
   <div class="form-row">
+    {{ form.picture.errors }}
+    {{ form.picture.label_tag }} {{ form.picture }}
+  </div>
+  <div class="form-row">
     {{ form.address.errors }}
     {{ form.address.label_tag }} {{ form.address }}
   </div>

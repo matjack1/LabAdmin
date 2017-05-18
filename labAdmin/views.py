@@ -351,7 +351,7 @@ class UserProfileView(TemplateResponseMixin, View):
             up = request.user.userprofile
         except UserProfile.DoesNotExist:
             up = None
-        form = UserProfileForm(request.POST, instance=up)
+        form = UserProfileForm(request.POST, request.FILES, instance=up)
         if form.is_valid():
             up = form.save(commit=False)
             up.user = request.user
