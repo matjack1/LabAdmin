@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'oauth2_provider',
     'corsheaders',
+    'versatileimagefield',
     'labAdmin',
 ]
 
@@ -134,6 +135,9 @@ USE_TZ = False
 
 STATIC_ROOT = os.path.join(os.path.dirname(__file__), 'static/')
 STATIC_URL = '/static/'
+
+MEDIA_ROOT = BASE_DIR
+MEDIA_URL = '/media/'
 
 LOGIN_REDIRECT_URL = 'labadmin-user-profile'
 
