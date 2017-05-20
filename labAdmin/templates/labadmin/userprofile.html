@@ -12,10 +12,25 @@
 {{ block.super }}
 
 <div id="content-main">
-<form method="post" action="" id="userprofile_form">{% csrf_token %}
+
+<div style="float:left; width:200px; height:200px; margin: 0 15px 0 0">
+{% if user.userprofile.picture %}<img src="{{ user.userprofile.picture.thumbnail.200x200 }}" alt="{{ user.username }}"/>
+{% endif %}
+</div>
+<h2>{{ user.userprofile.name }}</h2>
+<h3>{{ user.username }}</h3>
+{% trans "Available credits" %}: {{ user.card.credits }}
+<br style="clear:both;">
+
+<h2>{% trans "Update your profile" %}</h2>
+<form method="post" enctype="multipart/form-data" action="" id="userprofile_form">{% csrf_token %}
   <div class="form-row">
     {{ form.name.errors }}
     {{ form.name.label_tag }} {{ form.name }}
+  </div>
+  <div class="form-row">
+    {{ form.picture.errors }}
+    {{ form.picture.label_tag }} <p class="file-upload">{{ form.picture }}</p>
   </div>
   <div class="form-row">
     {{ form.address.errors }}
@@ -36,7 +51,7 @@
   <div class="submit-row">
     <input type="submit" value="{% trans 'Save' %}" />
   </div>
-
 </form>
+
 </div>
 {% endblock %}

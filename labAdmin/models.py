@@ -5,6 +5,8 @@ from django.template import Template, Context
 from django.utils import timezone
 from django.utils.text import slugify
 
+from versatileimagefield.fields import VersatileImageField
+
 import uuid
 
 
@@ -77,7 +79,7 @@ class UserProfile(models.Model):
     address = models.CharField(max_length=200, null=True, blank=True)
     tax_code = models.CharField(max_length=50, null=True, blank=True)
     vat_id = models.CharField(max_length=50, null=True, blank=True)
-    picture = models.ImageField(upload_to="labadmin/users/pictures", null=True, blank=True)
+    picture = VersatileImageField(upload_to="labadmin/users/pictures", null=True, blank=True)
     bio = models.TextField(null=True, blank=True)
 
     firstSignup = models.DateField(null=True)

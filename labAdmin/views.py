@@ -344,14 +344,14 @@ class UserProfileView(TemplateResponseMixin, View):
         except UserProfile.DoesNotExist:
             up = None
         form = UserProfileForm(instance=up)
-        return self.render_to_response({'form': form})
+        return self.render_to_response({'form': form, 'user': request.user})
 
     def post(self, request, *args, **kwargs):
         try:
             up = request.user.userprofile
         except UserProfile.DoesNotExist:
             up = None
-        form = UserProfileForm(request.POST, instance=up)
+        form = UserProfileForm(request.POST, request.FILES, instance=up)
         if form.is_valid():
             up = form.save(commit=False)
             up.user = request.user
@@ -360,7 +360,7 @@ class UserProfileView(TemplateResponseMixin, View):
             up.save()
             messages.add_message(request, messages.INFO, 'Profile updated correctly')
             return redirect('labadmin-user-profile')
-        return self.render_to_response({'form': form})
+        return self.render_to_response({'form': form, 'user': request.user})
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: LabAdmin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-03-21 16:42+0100\n"
+"POT-Creation-Date: 2017-05-18 23:19+0200\n"
 "PO-Revision-Date: 2017-01-31 14:57+0100\n"
 "Last-Translator: Riccardo Magliocchetti <riccardo.magliocchetti@gmail.com\n"
 "Language-Team: Italian\n"
@@ -188,7 +188,15 @@ msgstr ""
 msgid "Reset my password"
 msgstr ""
 
-#: templates/labadmin/userprofile.html:37
+#: templates/labadmin/userprofile.html:22
+msgid "Available credits"
+msgstr "Crediti disponibili"
+
+#: templates/labadmin/userprofile.html:25
+msgid "Update your profile"
+msgstr "Aggiorna il tuo profilo"
+
+#: templates/labadmin/userprofile.html:52
 msgid "Save"
 msgstr ""
 
@@ -228,8 +236,10 @@ msgstr "Grazie per esserti registrato"
 
 #: templates/registration/registration_complete.html:11
 msgid "Please check your email to activate your account."
-msgstr "Per favore controlla la tua casella di posta elettronica per attivare il tuo account."
+msgstr ""
+"Per favore controlla la tua casella di posta elettronica per attivare il tuo "
+"account."
 
-#: views.py:105
+#: views.py:104
 msgid "entrance"
 msgstr "entrata"
