@@ -10,7 +10,7 @@ except ImportError:
 from django.utils import timezone, dateparse
 
 from .models import (
-    Card, Group, LogAccess, Role, TimeSlot, UserProfile,
+    Card, Group, LogAccess, Role, TimeSlot, UserProfile, DeviceUserCode,
     LogCredits, Category, Device, LogDevice, LogError, Sketch
 )
 
@@ -69,11 +69,18 @@ class TestLabAdmin(TestCase):
             mac="00:00:00:00:00:00"
         )
 
+        device_user_code = DeviceUserCode.objects.create(
+            code="code",
+            userprofile=u,
+            device=device
+        )
+
         cls.card = card
         cls.noperm_card = noperm_card
         cls.userprofile = u
         cls.noperm_userprofile = noperm_up
         cls.device = device
+        cls.device_user_code = device_user_code
 
     def test_login_by_nfc(self):
         client = Client()
@@ -99,12 +106,11 @@ class TestLabAdmin(TestCase):
         self.assertEqual(response.status_code, 405)
 
     def test_open_door_by_nfc(self):
-
         self.assertFalse(LogAccess.objects.all().exists())
 
         client = Client()
         auth = 'Token {}'.format(self.device.token)
-        url = reverse('open-door-nfc')
+        url = reverse('open-door')
         data = {
             'nfc_id': self.card.nfc_id
         }
@@ -123,31 +129,77 @@ class TestLabAdmin(TestCase):
         logaccess = LogAccess.objects.filter(card=self.card, device=self.device)
         self.assertTrue(logaccess.exists())
 
-        # no token
-        response = client.post(url, data, format='json')
+    def test_open_door_without_token(self):
+        url = reverse('open-door')
+        data = {
+            'nfc_id': self.card.nfc_id
+        }
+        response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, 403)
 
-        # invalid token
+    def test_open_door_with_invalid_token(self):
+        url = reverse('open-door')
         invalid_auth = 'Token ------'
-        response = client.post(url, data, format='json', HTTP_AUTHORIZATION=invalid_auth)
+        data = {
+            'nfc_id': self.card.nfc_id
+        }
+        response = self.client.post(url, data, format='json', HTTP_AUTHORIZATION=invalid_auth)
         self.assertEqual(response.status_code, 403)
 
-        # valid token, invalid data
+    def test_open_door_with_invalid_nfc(self):
+        url = reverse('open-door')
         data = {
             'nfc_id': 0
         }
-        response = client.post(url, data, format='json', HTTP_AUTHORIZATION=auth)
+        auth = 'Token {}'.format(self.device.token)
+        response = self.client.post(url, data, format='json', HTTP_AUTHORIZATION=auth)
         self.assertEqual(response.status_code, 400)
 
-        # wrong http method
-        response = client.get(url, HTTP_AUTHORIZATION=auth)
+    def test_open_door_does_not_handle_get_requests(self):
+        url = reverse('open-door')
+        auth = 'Token {}'.format(self.device.token)
+        response = self.client.get(url, HTTP_AUTHORIZATION=auth)
         self.assertEqual(response.status_code, 405)
+
+    def test_open_door_by_device_user_code(self):
+        self.assertFalse(LogAccess.objects.all().exists())
+
+        client = Client()
+        auth = 'Token {}'.format(self.device.token)
+        url = reverse('open-door')
+        data = {
+            'code': self.device_user_code.code
+        }
+        response = client.post(url, data, format='json', HTTP_AUTHORIZATION=auth)
+        self.assertEqual(response.status_code, 201)
+        response_data = json.loads(str(response.content, encoding='utf8'))
+        self.assertIn('users', response_data)
+        self.assertEqual(len(response_data['users']), 1)
+        user_profile = response_data['users'][0]
+        self.assertEqual(user_profile['id'], self.userprofile.pk)
+        self.assertEqual(user_profile['name'], self.userprofile.name)
+        self.assertEqual(response_data['type'], 'other')
+        self.assertIn('datetime', response_data)
+        self.assertEqual(response_data['open'], self.userprofile.can_use_device_now(self.device))
+
+        logaccess = LogAccess.objects.filter(card=self.card, device=self.device)
+        self.assertTrue(logaccess.exists())
+
+    def test_open_door_by_device_user_code_invalid_code(self):
+        client = Client()
+        auth = 'Token {}'.format(self.device.token)
+        url = reverse('open-door')
+        data = {
+            'code': '0'
+        }
+        response = client.post(url, data, format='json', HTTP_AUTHORIZATION=auth)
+        self.assertEqual(response.status_code, 400)
 
     @override_settings(LABADMIN_NOTIFY_MQTT_ENTRANCE=True)
     def test_open_door_by_nfc_mqtt_error_log(self):
         client = Client()
         auth = 'Token {}'.format(self.device.token)
-        url = reverse('open-door-nfc')
+        url = reverse('open-door')
         data = {
             'nfc_id': self.card.nfc_id
         }
@@ -450,6 +502,38 @@ class TestLabAdmin(TestCase):
         response = client.post(url, data, format='json', HTTP_AUTHORIZATION=invalid_auth)
         self.assertEqual(response.status_code, 403)
 
+    def test_device_start_works_with_code(self):
+        auth = 'Token {}'.format(self.device.token)
+        url = reverse('device-use-start')
+        data = {
+            'code': self.device_user_code.code,
+        }
+        response = self.client.post(url, data, HTTP_AUTHORIZATION=auth)
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(LogDevice.objects.count(), 1)
+        self.assertTrue(
+            LogDevice.objects.filter(
+                device=self.device, user=self.userprofile, inWorking=True
+            ).exists()
+        )
+        self.assertJSONEqual(response.content.decode('utf-8'), {
+            'cost': self.device.hourlyCost
+        })
+
+    def test_device_start_fails_with_invalid_code(self):
+        auth = 'Token {}'.format(self.device.token)
+        url = reverse('device-use-start')
+        data = {
+        }
+        response = self.client.post(url, data, HTTP_AUTHORIZATION=auth)
+        self.assertEqual(response.status_code, 400)
+
+        data = {
+            'code': ''
+        }
+        response = self.client.post(url, data, HTTP_AUTHORIZATION=auth)
+        self.assertEqual(response.status_code, 400)
+
     def test_device_stop_use(self):
         client = Client()
         auth = 'Token {}'.format(self.device.token)
@@ -512,6 +596,48 @@ class TestLabAdmin(TestCase):
         invalid_auth = 'Token ------'
         response = client.post(url, data, format='json', HTTP_AUTHORIZATION=invalid_auth)
         self.assertEqual(response.status_code, 403)
+
+    def test_device_stop_works_with_code(self):
+        now = timezone.now()
+        LogDevice.objects.create(
+            device=self.device,
+            user=self.userprofile,
+            startWork=now,
+            bootDevice=now,
+            shutdownDevice=now,
+            finishWork=now,
+            hourlyCost="0.0"
+        )
+        auth = 'Token {}'.format(self.device.token)
+        url = reverse('device-use-stop')
+        data = {
+            'code': self.device_user_code.code,
+        }
+        response = self.client.post(url, data, HTTP_AUTHORIZATION=auth)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(LogDevice.objects.count(), 1)
+        self.assertTrue(
+            LogDevice.objects.filter(
+                device=self.device, user=self.userprofile, inWorking=False
+            ).exists()
+        )
+        self.assertJSONEqual(response.content.decode('utf-8'), {
+            'cost': 0
+        })
+
+    def test_device_stop_fails_with_invalid_code(self):
+        auth = 'Token {}'.format(self.device.token)
+        url = reverse('device-use-stop')
+        data = {
+        }
+        response = self.client.post(url, data, HTTP_AUTHORIZATION=auth)
+        self.assertEqual(response.status_code, 400)
+
+        data = {
+            'code': ''
+        }
+        response = self.client.post(url, data, HTTP_AUTHORIZATION=auth)
+        self.assertEqual(response.status_code, 400)
 
     def test_user_can_use_device_now(self):
         self.assertTrue(self.userprofile.can_use_device_now(self.device))
