@@ -192,6 +192,20 @@ class Device(models.Model):
             self.token = str(uuid.uuid4())
         super(Device, self).save(*args, **kwargs)
 
+
+class DeviceUserCode(models.Model):
+    """A code that permits access to a device for a specific user"""
+    userprofile = models.ForeignKey(UserProfile)
+    device = models.ForeignKey(Device)
+    code = models.CharField(max_length=64)
+
+    def __str__(self):
+        return self.code
+
+    class Meta:
+        unique_together = (('userprofile', 'device', 'code'),)
+
+
 class Payment(models.Model):
     date = models.DateField(default=timezone.now().today)
     value=models.FloatField(default=0.0)

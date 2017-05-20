@@ -14,6 +14,7 @@ from labAdmin.models import (
     Sketch,
     TimeSlot,
     UserProfile,
+    DeviceUserCode,
 )
 
 from .forms import DeviceActionForm
@@ -37,10 +38,15 @@ class CardAdmin(admin.ModelAdmin):
 admin.site.register(Card, CardAdmin)
 
 
+class DeviceUserCodeInline(admin.TabularInline):
+    model = DeviceUserCode
+
+
 class UserProfileAdmin(admin.ModelAdmin):
     list_display = ('name', 'card', 'displaygroups','firstSignup', 'lastSignup', 'subscription')
     ordering = ('name','-needSubscription','-endSubscription') # The negative sign indicate descendent order
     search_fields = ('card__nfc_id', 'name', 'user__username',)
+    inlines = [DeviceUserCodeInline]
 
     def subscription(self, obj):
         return obj.endSubscription if obj.needSubscription else "lifetime membership"
