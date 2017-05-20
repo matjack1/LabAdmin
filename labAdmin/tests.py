@@ -10,7 +10,7 @@ except ImportError:
 from django.utils import timezone, dateparse
 
 from .models import (
-    Card, Group, LogAccess, Role, TimeSlot, UserProfile,
+    Card, Group, LogAccess, Role, TimeSlot, UserProfile, DeviceUserCode,
     LogCredits, Category, Device, LogDevice, LogError, Sketch
 )
 
@@ -69,11 +69,18 @@ class TestLabAdmin(TestCase):
             mac="00:00:00:00:00:00"
         )
 
+        device_user_code = DeviceUserCode.objects.create(
+            code="code",
+            userprofile=u,
+            device=device
+        )
+
         cls.card = card
         cls.noperm_card = noperm_card
         cls.userprofile = u
         cls.noperm_userprofile = noperm_up
         cls.device = device
+        cls.device_user_code = device_user_code
 
     def test_login_by_nfc(self):
         client = Client()
@@ -104,7 +111,7 @@ class TestLabAdmin(TestCase):
 
         client = Client()
         auth = 'Token {}'.format(self.device.token)
-        url = reverse('open-door-nfc')
+        url = reverse('open-door')
         data = {
             'nfc_id': self.card.nfc_id
         }
@@ -143,11 +150,45 @@ class TestLabAdmin(TestCase):
         response = client.get(url, HTTP_AUTHORIZATION=auth)
         self.assertEqual(response.status_code, 405)
 
+    def test_open_door_by_device_user_code(self):
+        self.assertFalse(LogAccess.objects.all().exists())
+
+        client = Client()
+        auth = 'Token {}'.format(self.device.token)
+        url = reverse('open-door')
+        data = {
+            'code': self.device_user_code.code
+        }
+        response = client.post(url, data, format='json', HTTP_AUTHORIZATION=auth)
+        self.assertEqual(response.status_code, 201)
+        response_data = json.loads(str(response.content, encoding='utf8'))
+        self.assertIn('users', response_data)
+        self.assertEqual(len(response_data['users']), 1)
+        user_profile = response_data['users'][0]
+        self.assertEqual(user_profile['id'], self.userprofile.pk)
+        self.assertEqual(user_profile['name'], self.userprofile.name)
+        self.assertEqual(response_data['type'], 'other')
+        self.assertIn('datetime', response_data)
+        self.assertEqual(response_data['open'], self.userprofile.can_use_device_now(self.device))
+
+        logaccess = LogAccess.objects.filter(card=self.card, device=self.device)
+        self.assertTrue(logaccess.exists())
+
+    def test_open_door_by_device_user_code_invalid_code(self):
+        client = Client()
+        auth = 'Token {}'.format(self.device.token)
+        url = reverse('open-door')
+        data = {
+            'code': '0'
+        }
+        response = client.post(url, data, format='json', HTTP_AUTHORIZATION=auth)
+        self.assertEqual(response.status_code, 400)
+
     @override_settings(LABADMIN_NOTIFY_MQTT_ENTRANCE=True)
     def test_open_door_by_nfc_mqtt_error_log(self):
         client = Client()
         auth = 'Token {}'.format(self.device.token)
-        url = reverse('open-door-nfc')
+        url = reverse('open-door')
         data = {
             'nfc_id': self.card.nfc_id
         }

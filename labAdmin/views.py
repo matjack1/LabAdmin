@@ -24,6 +24,7 @@ from labAdmin.models import (
     LogDevice,
     LogError,
     UserProfile,
+    DeviceUserCode
 )
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -57,10 +58,37 @@ class LoginByNFC(APIView):
             return Response("", status=status.HTTP_400_BAD_REQUEST)
         return Response(UserProfileSerializer(users, many=True).data, status=status.HTTP_200_OK)
 
-class OpenDoorByNFC(APIView):
+
+class GetUserFromNFCMixin(object):
+    def get_card_user_from_nfc_id(self, nfc_id):
+        try:
+            card = Card.objects.get(nfc_id=nfc_id)
+            user = card.userprofile
+        except Card.DoesNotExist:
+            card = None
+            user = None
+        return card, user
+
+
+class GetUserFromDeviceUserCodeMixin(object):
+    def get_card_user_from_code(self, code, device):
+        try:
+            device_user_code = DeviceUserCode.objects.get(code=code, device=device)
+            user = device_user_code.userprofile
+            card = user.card
+        except DeviceUserCode.DoesNotExist:
+            card = None
+            user = None
+        return card, user
+
+
+class OpenDoor(APIView, GetUserFromNFCMixin, GetUserFromDeviceUserCodeMixin):
     """
-    API For Opening the Door with Nfc (return log information)
-    In order to use this API send a POST with a value named 'nfc_id'
+    API For Opening the Door
+    In order to use this API send a POST with one of:
+        - 'nfc_id': nfc id as integer
+        - 'code': 64 char max code
+    The nfc_id will match a Card, the code will match a DeviceUserCode.
     The return value is a json array with:
         'users': an object with 'id' and 'name' of users
         'utype': 'fablab' if there's a user in the 'Fablab'group or 'other'
@@ -77,17 +105,29 @@ class OpenDoorByNFC(APIView):
         try:
             device = Device.objects.get(token=token)
         except Device.DoesNotExist:
-            LogError(description="Api: Open Door By NFC - token not valid", code=token or '').save()
+            LogError(description="Api: Open Door - token not valid", code=token or '').save()
             return Response("", status=status.HTTP_400_BAD_REQUEST)
 
         nfc_id = request.data.get('nfc_id')
-        try:
-            card = Card.objects.get(nfc_id=nfc_id)
-        except Card.DoesNotExist:
-            LogError(description="Api: Open Door By Nfc - nfc ID not valid", code=nfc_id or '', device=device).save()
+        card, user = self.get_card_user_from_nfc_id(nfc_id)
+
+        if user is None:
+            code = request.data.get('code')
+            card, user = self.get_card_user_from_code(code, device)
+
+        if user is None:
+            if nfc_id:
+                LogError.objects.create(
+                    description="Api: Open Door - nfc ID not valid", code=nfc_id, device=device
+                )
+            else:
+                LogError.objects.create(
+                    description="Api: Open Door - device code not valid",
+                    code=code or '',
+                    device=device
+                )
             return Response("", status=status.HTTP_400_BAD_REQUEST)
 
-        user = card.userprofile
         can_open = user.can_use_device_now(device)
         users = UserProfile.objects.filter(pk=user.pk)
         log_access = LogAccess.objects.log(card=card, opened=can_open, device=device)

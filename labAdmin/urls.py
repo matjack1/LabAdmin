@@ -34,7 +34,8 @@ pwd_reset_complete_opts = {
 }
 
 urlpatterns = [
-    url(r'^opendoorbynfc/$', views.OpenDoorByNFC.as_view(), name="open-door-nfc"),
+    url(r'^opendoorbynfc/$', views.OpenDoor.as_view()),
+    url(r'^opendoor/$', views.OpenDoor.as_view(), name="open-door"),
     url(r'^user/identity/$', views.UserIdentity.as_view()),
     url(r'^nfc/users/$', views.LoginByNFC.as_view(), name='nfc-users'),
     url(r'^card/credits/$', views.CardCredits.as_view(), name='card-credits'),
