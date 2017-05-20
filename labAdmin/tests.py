@@ -502,6 +502,38 @@ class TestLabAdmin(TestCase):
         response = client.post(url, data, format='json', HTTP_AUTHORIZATION=invalid_auth)
         self.assertEqual(response.status_code, 403)
 
+    def test_device_start_works_with_code(self):
+        auth = 'Token {}'.format(self.device.token)
+        url = reverse('device-use-start')
+        data = {
+            'code': self.device_user_code.code,
+        }
+        response = self.client.post(url, data, HTTP_AUTHORIZATION=auth)
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(LogDevice.objects.count(), 1)
+        self.assertTrue(
+            LogDevice.objects.filter(
+                device=self.device, user=self.userprofile, inWorking=True
+            ).exists()
+        )
+        self.assertJSONEqual(response.content.decode('utf-8'), {
+            'cost': self.device.hourlyCost
+        })
+
+    def test_device_start_fails_with_invalid_code(self):
+        auth = 'Token {}'.format(self.device.token)
+        url = reverse('device-use-start')
+        data = {
+        }
+        response = self.client.post(url, data, HTTP_AUTHORIZATION=auth)
+        self.assertEqual(response.status_code, 400)
+
+        data = {
+            'code': ''
+        }
+        response = self.client.post(url, data, HTTP_AUTHORIZATION=auth)
+        self.assertEqual(response.status_code, 400)
+
     def test_device_stop_use(self):
         client = Client()
         auth = 'Token {}'.format(self.device.token)
@@ -564,6 +596,48 @@ class TestLabAdmin(TestCase):
         invalid_auth = 'Token ------'
         response = client.post(url, data, format='json', HTTP_AUTHORIZATION=invalid_auth)
         self.assertEqual(response.status_code, 403)
+
+    def test_device_stop_works_with_code(self):
+        now = timezone.now()
+        LogDevice.objects.create(
+            device=self.device,
+            user=self.userprofile,
+            startWork=now,
+            bootDevice=now,
+            shutdownDevice=now,
+            finishWork=now,
+            hourlyCost="0.0"
+        )
+        auth = 'Token {}'.format(self.device.token)
+        url = reverse('device-use-stop')
+        data = {
+            'code': self.device_user_code.code,
+        }
+        response = self.client.post(url, data, HTTP_AUTHORIZATION=auth)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(LogDevice.objects.count(), 1)
+        self.assertTrue(
+            LogDevice.objects.filter(
+                device=self.device, user=self.userprofile, inWorking=False
+            ).exists()
+        )
+        self.assertJSONEqual(response.content.decode('utf-8'), {
+            'cost': 0
+        })
+
+    def test_device_stop_fails_with_invalid_code(self):
+        auth = 'Token {}'.format(self.device.token)
+        url = reverse('device-use-stop')
+        data = {
+        }
+        response = self.client.post(url, data, HTTP_AUTHORIZATION=auth)
+        self.assertEqual(response.status_code, 400)
+
+        data = {
+            'code': ''
+        }
+        response = self.client.post(url, data, HTTP_AUTHORIZATION=auth)
+        self.assertEqual(response.status_code, 400)
 
     def test_user_can_use_device_now(self):
         self.assertTrue(self.userprofile.can_use_device_now(self.device))

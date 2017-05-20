@@ -157,14 +157,16 @@ class OpenDoor(APIView, GetUserFromNFCMixin, GetUserFromDeviceUserCodeMixin):
         return Response(data, status=status.HTTP_201_CREATED)
 
 
-class DeviceStartUse(APIView):
+class DeviceStartUse(APIView, GetUserFromNFCMixin, GetUserFromDeviceUserCodeMixin):
     """
     API to track the start of a device usage by an user.
     In case of success returns a json HTTP 201
     Adds a new 'LogDevice' object if the user can use the device, otherwise returns an error.
 
-    In order to use this API send a POST with the following values:
-        'nfc_id': the id of user
+    In order to use this API send a POST with one of:
+        - 'nfc_id': nfc id as integer
+        - 'code': code, max 64 char
+    The nfc_id will match a Card, the code will match a DeviceUserCode.
     """
 
     permission_classes = (DeviceTokenPermission,)
@@ -178,15 +180,28 @@ class DeviceStartUse(APIView):
             return Response("", status=status.HTTP_400_BAD_REQUEST)
 
         nfc_id = request.data.get('nfc_id')
-        try:
-            card = Card.objects.get(nfc_id=nfc_id)
-        except Card.DoesNotExist:
-            LogError(description="Api: Use Device - nfc ID not valid", code=nfc_id or '', device=device).save()
+        card, user = self.get_card_user_from_nfc_id(nfc_id)
+
+        if user is None:
+            code = request.data.get('code')
+            card, user = self.get_card_user_from_code(code, device)
+
+        if user is None:
+            if nfc_id:
+                LogError.objects.create(
+                    description="Api: Use Device - nfc ID not valid", code=nfc_id, device=device
+                )
+            else:
+                LogError.objects.create(
+                    description="Api: Use Device - code not valid", code=code or '', device=device
+                )
             return Response("", status=status.HTTP_400_BAD_REQUEST)
 
-        user = card.userprofile
         if not user.can_use_device_now(device):
-            LogError(description="Api: Use Device - card {} can't use device {}".format(nfc_id, token), device=device).save()
+            LogError.objects.create(
+                description="Api: Use Device - card {} can't use device {}".format(nfc_id, token),
+                device=device
+            )
             return Response("", status=status.HTTP_400_BAD_REQUEST)
 
         # cleanup leaked instances
@@ -206,14 +221,16 @@ class DeviceStartUse(APIView):
         )
 
 
-class DeviceStopUse(APIView):
+class DeviceStopUse(APIView, GetUserFromNFCMixin, GetUserFromDeviceUserCodeMixin):
     """
     API to track the stop of a device usage by an user.
     In case of success returns a json HTTP 200
     Updates the 'LogDevice' object for the user on this device, otherwise returns an error.
 
-    In order to use this API send a POST with the following values:
-        'nfc_id': the id of user
+    In order to use this API send a POST with one of:
+        - 'nfc_id': nfc id as integer
+        - 'code': code, max 64 char
+    The nfc_id will match a Card, the code will match a DeviceUserCode.
     """
 
     permission_classes = (DeviceTokenPermission,)
@@ -226,14 +243,25 @@ class DeviceStopUse(APIView):
             LogError(description="Api: Stop use Device - token not valid", code=token or '').save()
             return Response("", status=status.HTTP_400_BAD_REQUEST)
 
+
         nfc_id = request.data.get('nfc_id')
-        try:
-            card = Card.objects.get(nfc_id=nfc_id)
-        except Card.DoesNotExist:
-            LogError(description="Api: Stop use Device - nfc ID not valid", code=nfc_id or '', device=device).save()
+        card, user = self.get_card_user_from_nfc_id(nfc_id)
+
+        if user is None:
+            code = request.data.get('code')
+            card, user = self.get_card_user_from_code(code, device)
+
+        if user is None:
+            if nfc_id:
+                LogError.objects.create(
+                    description="Api: Stop use Device - nfc ID not valid", code=nfc_id, device=device
+                )
+            else:
+                LogError.objects.create(
+                    description="Api: Stop use Device - code not valid", code=code or '', device=device
+                )
             return Response("", status=status.HTTP_400_BAD_REQUEST)
 
-        user = card.userprofile
         try:
             log = LogDevice.objects.get(device=device, user=user, inWorking=True)
         except LogDevice.DoesNotExist:
