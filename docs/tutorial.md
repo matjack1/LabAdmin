@@ -11,7 +11,7 @@ First we are going to install all requirements.
 Please note that *mysql-server* will require a password for the root user that you'll need later.
 
 ```
-sudo apt install build-essential python3 python3-dev libjpeg-dev libmysqlclient-dev git mysql-server nginx postfix libsasl2-2 libsasl2-modules
+sudo apt install build-essential python3 python3-dev libjpeg-dev libmysqlclient-dev git mysql-server nginx postfix libsasl2-2 libsasl2-modules python3-pip python3-venv sasl2-bin
 sudo apt-get clean
 ```
 
