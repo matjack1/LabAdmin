@@ -106,7 +106,6 @@ class TestLabAdmin(TestCase):
         self.assertEqual(response.status_code, 405)
 
     def test_open_door_by_nfc(self):
-
         self.assertFalse(LogAccess.objects.all().exists())
 
         client = Client()
@@ -130,24 +129,36 @@ class TestLabAdmin(TestCase):
         logaccess = LogAccess.objects.filter(card=self.card, device=self.device)
         self.assertTrue(logaccess.exists())
 
-        # no token
-        response = client.post(url, data, format='json')
+    def test_open_door_without_token(self):
+        url = reverse('open-door')
+        data = {
+            'nfc_id': self.card.nfc_id
+        }
+        response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, 403)
 
-        # invalid token
+    def test_open_door_with_invalid_token(self):
+        url = reverse('open-door')
         invalid_auth = 'Token ------'
-        response = client.post(url, data, format='json', HTTP_AUTHORIZATION=invalid_auth)
+        data = {
+            'nfc_id': self.card.nfc_id
+        }
+        response = self.client.post(url, data, format='json', HTTP_AUTHORIZATION=invalid_auth)
         self.assertEqual(response.status_code, 403)
 
-        # valid token, invalid data
+    def test_open_door_with_invalid_nfc(self):
+        url = reverse('open-door')
         data = {
             'nfc_id': 0
         }
-        response = client.post(url, data, format='json', HTTP_AUTHORIZATION=auth)
+        auth = 'Token {}'.format(self.device.token)
+        response = self.client.post(url, data, format='json', HTTP_AUTHORIZATION=auth)
         self.assertEqual(response.status_code, 400)
 
-        # wrong http method
-        response = client.get(url, HTTP_AUTHORIZATION=auth)
+    def test_open_door_does_not_handle_get_requests(self):
+        url = reverse('open-door')
+        auth = 'Token {}'.format(self.device.token)
+        response = self.client.get(url, HTTP_AUTHORIZATION=auth)
         self.assertEqual(response.status_code, 405)
 
     def test_open_door_by_device_user_code(self):
