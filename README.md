@@ -1,6 +1,6 @@
 # LabAdmin
 
-Manage user rights to access the lab and the machines
+Labadmin is a Django application created to manage user rights to access the lab and the machines.
 
 ## Installation
 
@@ -9,40 +9,37 @@ If you are going to deploy labAdmin from scratch on a new Django installation yo
 - follow the [Tutorial](docs/tutorial.md)
 - use the [Ansible role ](https://github.com/OfficineArduinoTorino/ansible-labadmin/)
 
-## Quickstart
+## Upgrade to a newer release
 
-Install labAdmin:
+Before upgrading please read the [release notes](https://github.com/OfficineArduinoTorino/LabAdmin/releases) posted for each release on github.
+They may contain changes you have to do on your Django project configuration.
 
-```
-python setup.py install
-```
-
-Add it to the installed apps:
+First we are installing the latest release from github:
 
 ```
-INSTALLED_APPS = [
-    # ...
-    'rest_framework',
-    'oauth2_provider',
-    'versatileimagefield',
-    'labAdmin',
-]
+cd /var/www/labadmin/labadmin
+sudo -H -u labadmin ../venv/bin/pip install <url of labadmin release from github.zip>
 ```
 
-Add labAdmin urls to your project urls:
+After that you'll have to do any project settings update as described in the release notes.
+
+Then you have to execute any eventual data migration with the `migrate` command and update the static
+files with `collectstatic`:
 
 ```
-urlpatterns = [
-    # ...
-    include(r'^labAdmin/', include('labAdmin.urls')),
-]
+sudo -H -u labadmin ../venv/bin/python manage.py migrate
+sudo -H -u labadmin ../venv/bin/python manage.py collectstatic
 ```
 
-Profit!
+As a last step you have to restart the labadmin service to load the new code:
 
-### Settings
+```
+sudo service labadmin restart
+```
 
-The optional MQTT integration has the following settings:
+## Settings
+
+The optional MQTT integration has the following settings overridable in `settings.py`:
 
 ```
 LABADMIN_MQTT_CONFIG = {
