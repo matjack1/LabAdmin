@@ -106,7 +106,7 @@ python3 -m venv venv
 . ./venv/bin/activate
 pip install --upgrade pip
 pip install Django~=1.10 Pillow django-cors-middleware django-oauth-toolkit==0.10.0 djangorestframework mysqlclient paho-mqtt gunicorn
-pip install https://github.com/OfficineArduinoTorino/LabAdmin/archive/master.zip
+pip install https://github.com/OfficineArduinoTorino/LabAdmin/archive/v0.4.0.zip
 
 mkdir bin
 echo "#!/bin/sh" > bin/labadmin
