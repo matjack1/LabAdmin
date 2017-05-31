@@ -34,7 +34,7 @@ class TestLabAdmin(TestCase):
         devices_group = Group.objects.create(name="Full Devices access")
         devices_group.roles.add(full_devices_role)
 
-        card = Card.objects.create(nfc_id=123456)
+        card = Card.objects.create(nfc_id=123456, credits=11)
         user = User.objects.create_user(username="alessandro.monaco", password="password")
         user.is_staff = True
         user.save()
@@ -703,6 +703,14 @@ class TestLabAdmin(TestCase):
         url = reverse('labadmin-user-profile')
         response = self.client.get(url)
         self.assertRedirects(response, '/accounts/login/?next={}'.format(url))
+
+    def test_user_profile_view_show_user_credits(self):
+        url = reverse('labadmin-user-profile')
+        self.client.login(username='alessandro.monaco', password='password')
+
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, ': 11')
 
     def test_user_profile_view_update(self):
         url = reverse('labadmin-user-profile')
