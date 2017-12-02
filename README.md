@@ -2,6 +2,8 @@
 
 Labadmin is a Django application created to manage user rights to access the lab and the machines.
 
+In this Readme you can follow the tutorial to set it up on a PC or Raspberry Pi. If you go in the ```Client``` folder you'll be able to access the different clients you can use with Labadmin 
+
 ## Installation
 
 If you are going to deploy labAdmin from scratch on a new Django installation you have two choices:
