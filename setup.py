@@ -23,7 +23,7 @@ setup(
     include_package_data=True,
     install_requires=[
        'django<1.11,>=1.8',
-       'djangorestframework>3,<4',
+       'djangorestframework>3,<3.7',
        'django-cors-middleware==1.3.1',
        'django-oauth-toolkit==0.10.0',
        'django-registration>=2.2,<3',
