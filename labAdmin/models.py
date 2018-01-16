@@ -95,10 +95,14 @@ class UserProfile(models.Model):
     def subscription_end(self):
         return self.endSubscription if self.needSubscription else "Subscription not needed"
 
-    def subscriptionExpired(self):
-        return self.needSubscription and self.endSubscription < timezone.now()
+    def has_valid_subscription(self):
+        if not self.needSubscription:
+            return True
+        return self.needSubscription and self.endSubscription > timezone.now().date()
 
     def can_use_device_now(self, device):
+        if not self.has_valid_subscription():
+            return False
         roles = self.groups.values_list('roles__pk', flat=True).distinct()
         return TimeSlot.objects.can_now().filter(
             role__in=roles, role__valid=True, role__categories=device.category

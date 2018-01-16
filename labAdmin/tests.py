@@ -43,7 +43,7 @@ class TestLabAdmin(TestCase):
             card=card,
             name="Alessandro Monaco",
             needSubscription=False,
-            endSubscription=timezone.now()
+            endSubscription=timezone.now().date()
         )
         u.groups.add(devices_group)
 
@@ -53,9 +53,20 @@ class TestLabAdmin(TestCase):
             user=noperm_user,
             card=noperm_card,
             name="No Permission",
-            needSubscription=False,
-            endSubscription=timezone.now()
+            needSubscription=True,
+            endSubscription=timezone.now().date()+datetime.timedelta(days=1)
         )
+
+        nosub_card = Card.objects.create(nfc_id=610)
+        nosub_user = User.objects.create_user(username="nosubscription", password="password")
+        nosub_up = UserProfile.objects.create(
+            user=nosub_user,
+            card=nosub_card,
+            name="No subscription",
+            needSubscription=True,
+            endSubscription=timezone.now().date()+datetime.timedelta(days=-1)
+        )
+        nosub_up.groups.add(devices_group)
 
         category = Category.objects.create(
             name="category"
@@ -79,6 +90,7 @@ class TestLabAdmin(TestCase):
         cls.noperm_card = noperm_card
         cls.userprofile = u
         cls.noperm_userprofile = noperm_up
+        cls.nosub_userprofile = nosub_up
         cls.device = device
         cls.device_user_code = device_user_code
 
@@ -684,6 +696,11 @@ class TestLabAdmin(TestCase):
         self.noperm_userprofile.groups.add(group)
         self.assertFalse(self.noperm_userprofile.can_use_device_now(self.device))
 
+    def test_user_cannot_use_device_now_without_valid_subscription_but_valid_timeslot(self):
+        self.assertTrue(self.nosub_userprofile.needSubscription)
+        self.assertEqual(self.nosub_userprofile.displaygroups(), 'Full Devices access')
+        self.assertFalse(self.nosub_userprofile.can_use_device_now(self.device))
+
     def test_logaccess_print(self):
         log = LogAccess.objects.log(
             card=self.card,
@@ -737,6 +754,18 @@ class TestLabAdmin(TestCase):
         self.assertContains(response, '123')
         self.assertContains(response, 'A poignant bio')
         self.client.logout()
+
+    def test_has_valid_subscription_works_with_needsubscription_false(self):
+        self.assertFalse(self.userprofile.needSubscription)
+        self.assertTrue(self.userprofile.has_valid_subscription())
+
+    def test_has_valid_subscription_works_with_needsubscription_and_endsubscription_in_the_future(self):
+        self.assertTrue(self.noperm_userprofile.needSubscription)
+        self.assertTrue(self.noperm_userprofile.has_valid_subscription())
+
+    def test_has_valid_subscription_fails_with_needsubscription_and_endsubscription_in_the_past(self):
+        self.assertTrue(self.nosub_userprofile.needSubscription)
+        self.assertFalse(self.nosub_userprofile.has_valid_subscription())
 
 
 class TimeSlotTests(TestCase):
