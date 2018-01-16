@@ -8,7 +8,7 @@ try:
 except ImportError:
     from distutils.core import setup
 
-version = '0.4.1'
+version = '0.4.2'
 
 setup(
     name='labAdmin',
