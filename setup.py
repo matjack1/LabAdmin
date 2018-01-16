@@ -26,7 +26,7 @@ setup(
        'djangorestframework>3,<3.7',
        'django-cors-middleware==1.3.1',
        'django-oauth-toolkit==0.10.0',
-       'django-registration>=2.2,<3',
+       'django-registration>=2.2,<2.3',
        'django-versatileimagefield>=1.7.0,<2',
        'paho-mqtt>1,<2',
        'Pillow<4.1',
