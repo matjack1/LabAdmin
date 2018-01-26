@@ -88,6 +88,7 @@ class TestLabAdmin(TestCase):
 
         cls.card = card
         cls.noperm_card = noperm_card
+        cls.nosub_card = nosub_card
         cls.userprofile = u
         cls.noperm_userprofile = noperm_up
         cls.nosub_userprofile = nosub_up
@@ -166,6 +167,21 @@ class TestLabAdmin(TestCase):
         auth = 'Token {}'.format(self.device.token)
         response = self.client.post(url, data, format='json', HTTP_AUTHORIZATION=auth)
         self.assertEqual(response.status_code, 400)
+
+    def test_open_door_return_forbidden_without_subscription(self):
+        self.assertFalse(LogAccess.objects.all().exists())
+
+        client = Client()
+        auth = 'Token {}'.format(self.device.token)
+        url = reverse('open-door')
+        data = {
+            'nfc_id': self.nosub_card.nfc_id
+        }
+        response = client.post(url, data, format='json', HTTP_AUTHORIZATION=auth)
+        self.assertEqual(response.status_code, 403)
+
+        logaccess = LogAccess.objects.filter(card=self.nosub_card, device=self.device, opened=False)
+        self.assertTrue(logaccess.exists())
 
     def test_open_door_does_not_handle_get_requests(self):
         url = reverse('open-door')

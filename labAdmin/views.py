@@ -96,6 +96,7 @@ class OpenDoor(APIView, GetUserFromNFCMixin, GetUserFromDeviceUserCodeMixin):
         'open': return if the user can open the door or not
 
     If the nfc code isn't correct or valid, the API save in 'LogError' a new error that contains the error then return an alert message to client (HTTP_400_BAD_REQUEST)
+    If the card does not have permissions to open the door a status code of 403 is returned to the user
     """
 
     permission_classes = (DeviceTokenPermission,)
@@ -131,6 +132,9 @@ class OpenDoor(APIView, GetUserFromNFCMixin, GetUserFromDeviceUserCodeMixin):
         can_open = user.can_use_device_now(device)
         users = UserProfile.objects.filter(pk=user.pk)
         log_access = LogAccess.objects.log(card=card, opened=can_open, device=device)
+        if not can_open:
+            return Response("", status=status.HTTP_403_FORBIDDEN)
+
         users_pks = users.values_list('pk', flat=True)
         if Group.objects.filter(userprofile__in=users_pks, name__icontains='Fablab').exists():
             utype = "fablab"
