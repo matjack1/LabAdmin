@@ -21,7 +21,7 @@ import httplib
 
 
 #url of the server also, it is possible to edit /etc/hosts in order to mask ip
-baseurl='labchat.officine.cc:8443'
+baseurl='<yourHost>'
 
 #taken from urls.py in labadmin repository on github
 urls={'doorNFC':'/labadmin/labAdmin/opendoorbynfc/','userUpd':'/labadmin/labAdmin\updateUsers/','id':'/labadmin/labAdmin/user/identity/','nfcUs':'/labadmin/labAdmin/nfc/users/','cred':'labadmin/labAdmin/card/credits/'}
@@ -32,7 +32,7 @@ def request(code):
         #formatting the post request
         data['code']=code
         params = urlencode(data)
-        headers={"Content-Type":"application/x-www-form-urlencoded", "Authorization":"token e96302fb-a92a-427e-905e-84af256f60d3"}
+        headers={"Content-Type":"application/x-www-form-urlencoded", "Authorization":"token <YourToken>"}
         #connecting to the server
         conn = httplib.HTTPSConnection(baseurl)
         try:
