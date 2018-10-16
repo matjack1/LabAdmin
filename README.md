@@ -1,63 +1,32 @@
-# LabAdmin
+# Multilingual Jekyll
 
-Labadmin is a Django application created to manage user rights to access the lab and the machines.
+This repository aims to show how to get a minimal multilingual *Jekyll* website.
 
-In this Readme you can follow the tutorial to set it up on a PC or Raspberry Pi. If you go in the ```Client``` folder you'll be able to access the different clients you can use with Labadmin 
+It is based on the [**Making *Jekyll* multilingual**](https://www.sylvaindurand.org/making-jekyll-multilingual/) article, applied on the [Jekyll default theme](https://github.com/jglovier/jekyll-new).
 
-## Installation
+You can check the demo on [sylvaindurand.github.io/jekyll-multilingual/](https://sylvaindurand.github.io/jekyll-multilingual/).
 
-If you are going to deploy labAdmin from scratch on a new Django installation you have two choices:
 
-- follow the [Tutorial](docs/tutorial.md)
-- use the [Ansible role ](https://github.com/OfficineArduinoTorino/ansible-labadmin/)
+## Make your website multilingual
 
-## Upgrade to a newer release
+1. Have a look at the article [Making *Jekyll* multilingual](https://www.sylvaindurand.org/making-jekyll-multilingual/), which explains how things work
+2. Check the [diff for Jekyll 3.1.x](https://github.com/sylvaindurand/jekyll-multilingual/commit/111495e91e8986db21368e54a42188cdbbc44b6f) (older versions: [3.0.x](https://github.com/sylvaindurand/jekyll-multilingual/commit/b2da2a07c325a1b6e01f524dad6582f2daf70ccf), [2.5.x](https://github.com/sylvaindurand/jekyll-multilingual/commit/e0bed79df22d2d35a75d0906e2c9c2baeac44a73))
+3. Reproduce it on your website!
 
-Before upgrading please read the [release notes](https://github.com/OfficineArduinoTorino/LabAdmin/releases) posted for each release on github.
-They may contain changes you have to do on your Django project configuration.
 
-First we are installing the latest release from github:
+## Create a multilingual website from stratch
 
-```
-cd /var/www/labadmin/labadmin
-sudo -H -u labadmin ../venv/bin/pip install <url of labadmin release from github.zip>
-```
+1. Still have a look at the article [Making *Jekyll* multilingual](https://www.sylvaindurand.org/making-jekyll-multilingual/), which explains how things work!
+2. Clone the repo: `git clone https://github.com/sylvaindurand/jekyll-multilingual.git`
+3. Open the folder: `cd jekyll-multilingual`
+4. Remove `Readme.md` and `jekyll-multilingual.gemspec`, which are useless outside this repository
+5. Build the website: `jekyll build`
 
-After that you'll have to do any project settings update as described in the release notes.
+## Colophon
 
-Then you have to execute any eventual data migration with the `migrate` command and update the static
-files with `collectstatic`:
+After having written an article about having a multilingual *Jekyll* website, [sigul](https://talk.jekyllrb.com/t/a-vanilla-jekyll-theme-multilingual-with-no-plugins/) gave the idea to provide a minimal working example. Here we are!
 
-```
-sudo -H -u labadmin ../venv/bin/python manage.py migrate
-sudo -H -u labadmin ../venv/bin/python manage.py collectstatic
-```
+The [source code](https://github.com/sylvaindurand/jekyll-multilingual) is freely available on [GitHub](https://github.com/sylvaindurand/jekyll-multilingual). The *Jekyll* default theme is released under the MIT License, such as the modifications shown in this repository.
 
-As a last step you have to restart the labadmin service to load the new code:
-
-```
-sudo service labadmin restart
-```
-
-## Settings
-
-The optional MQTT integration has the following settings overridable in `settings.py`:
-
-```
-LABADMIN_MQTT_CONFIG = {
-    'HOSTNAME': 'localhost',
-    'PORT': 1883,
-    'AUTH': None,
-    'TLS': None,
-    'PROTOCOL': MQTTv311,
-    'TRANSPORT': 'tcp',
-}
-
-# Should we publish on MQTT each entrance
-LABADMIN_NOTIFY_MQTT_ENTRANCE = False
-
-# The MQTT topic where to publish
-LABADMIN_MQTT_ENTRANCE_TOPIC = 'labadmin/entrance'
-```
-
-See [Paho MQTT documentation](https://github.com/eclipse/paho.mqtt.python#single) for `LABADMIN_MQTT_CONFIG` values.
+## Question?
+Please feel free to [open an issue](https://github.com/sylvaindurand/jekyll-multilingual/issues) or to [push a commit](https://github.com/sylvaindurand/jekyll-multilingual/pulls).

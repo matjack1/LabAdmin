@@ -1,3 +1,0 @@
-## Yun Client
-
-Currently unused.
