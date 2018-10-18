@@ -7,91 +7,107 @@
             </button>
         </div>
         <div class="collapse navbar-collapse" id="main-navbar">
-            {% if page.lang == 'it' %}
-                <ul class="navbar-nav mr-auto w-100 justify-content-end">
-                    <li class="nav-item">
-                        <a class="nav-link page-scroll primo" href="{{ site.t[page.lang].home }}#hero-area">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link page-scroll" href="{{ site.t[page.lang].home }}#services">Cos'è</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link page-scroll" href="{{ site.t[page.lang].home }}#features">Dov'è</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link page-scroll" href="{{ site.t[page.lang].home }}#portfolios">Macchine</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link page-scroll" href="{{ site.t[page.lang].home }}#pricing">Progetto</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link page-scroll" href="{{ site.t[page.lang].home }}#blog">Blog</a>
-                    </li>
-                    <li class="nav-item lingue">
-                        <a class="nav-link page-scroll flag qui" href="index.html">ITA</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link page-scroll flag" href="index_eng.html">ENG</a>
-                    </li>
-                </ul>
-            {% else if page.lang == 'en' %}
-                <ul class="navbar-nav mr-auto w-100 justify-content-end">
-                    <li class="nav-item">
-                        <a class="nav-link page-scroll primo" href="{{ site.t[page.lang].home }}#hero-area">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link page-scroll" href="{{ site.t[page.lang].home }}#services">What Is</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link page-scroll" href="{{ site.t[page.lang].home }}#features">Where Is</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link page-scroll" href="{{ site.t[page.lang].home }}#portfolios">Machines</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link page-scroll" href="{{ site.t[page.lang].home }}#pricing">Project</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link page-scroll" href="{{ site.t[page.lang].home }}#blog">Blog</a>
-                    </li>
-                    <li class="nav-item lingue">
-                        <a class="nav-link page-scroll flag" href="index.html">ITA</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link page-scroll flag qui" href="index_eng.html">ENG</a>
-                    </li>
-                </ul>
-            {% endif %}
+            <ul class="navbar-nav mr-auto w-100 justify-content-end">
+                <li class="nav-item">
+                    <a class="nav-link page-scroll primo" href="{{ site.t[page.lang].home | prepend: site.baseurl | prepend: site.url }}#hero-area">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link page-scroll" href="{{ site.t[page.lang].home | prepend: site.baseurl | prepend: site.url }}#services">
+                        {% if page.lang == 'it' %}
+                            Cos'è
+                        {% else if page.lang == 'en' %}
+                            What Is
+                        {% endif %}
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link page-scroll" href="{{ site.t[page.lang].home | prepend: site.baseurl | prepend: site.url }}#features">
+                        {% if page.lang == 'it' %}
+                            Dov'è
+                        {% else if page.lang == 'en' %}
+                            Where Is
+                        {% endif %}
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link page-scroll" href="{{ site.t[page.lang].home | prepend: site.baseurl | prepend: site.url }}#portfolios">
+                        {% if page.lang == 'it' %}
+                            Macchine
+                        {% else if page.lang == 'en' %}
+                            Machines
+                        {% endif %}
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link page-scroll" href="{{ site.t[page.lang].home | prepend: site.baseurl | prepend: site.url }}#pricing">
+                        {% if page.lang == 'it' %}
+                            Progetto
+                        {% else if page.lang == 'en' %}
+                            Project
+                        {% endif %}
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link page-scroll" href="{{ site.t[page.lang].home | prepend: site.baseurl | prepend: site.url }}#blog">Blog</a>
+                </li>
+                <li class="nav-item lingue">
+                    <a class="nav-link page-scroll flag {% if page.lang == 'it' %}qui{% endif %}" href="{{ "index.html" | prepend: site.baseurl | prepend: site.url }}">ITA</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link page-scroll flag {% if page.lang == 'en' %}qui{% endif %}" href="{{ "index_eng.html" | prepend: site.baseurl | prepend: site.url }}">ENG</a>
+                </li>
+            </ul>
         </div>
     </div>
 
     <ul class="mobile-menu">
         <li class="nav-item lingue">
-            <a class="nav-link page-scroll flag qui" href="index.html">IT</a>
+            <a class="nav-link page-scroll flag {% if page.lang == 'it' %}qui{% endif %}" href="{{ "index.html" | prepend: site.baseurl | prepend: site.url }}">ITA</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link page-scroll flag" href="english-index.html">ENG</a>
+            <a class="nav-link page-scroll flag {% if page.lang == 'en' %}qui{% endif %}" href="{{ "index_eng.html" | prepend: site.baseurl | prepend: site.url }}">ENG</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link page-scroll primo" href="#hero-area">Home</a>
+            <a class="nav-link page-scroll primo" href="{{ site.t[page.lang].home | prepend: site.baseurl | prepend: site.url }}#hero-area">Home</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link page-scroll" href="#services">Cos'è</a>
+            <a class="nav-link page-scroll" href="{{ site.t[page.lang].home | prepend: site.baseurl | prepend: site.url }}#services">
+                {% if page.lang == 'it' %}
+                    Cos'è
+                {% else if page.lang == 'en' %}
+                    What Is
+                {% endif %}
+            </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link page-scroll" href="#features">Dov'è</a>
+            <a class="nav-link page-scroll" href="{{ site.t[page.lang].home | prepend: site.baseurl | prepend: site.url }}#features">
+                {% if page.lang == 'it' %}
+                    Dov'è
+                {% else if page.lang == 'en' %}
+                    Where Is
+                {% endif %}
+            </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link page-scroll" href="#portfolios">Macchine</a>
+            <a class="nav-link page-scroll" href="{{ site.t[page.lang].home | prepend: site.baseurl | prepend: site.url }}#portfolios">
+                {% if page.lang == 'it' %}
+                    Macchine
+                {% else if page.lang == 'en' %}
+                    Machines
+                {% endif %}
+            </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link page-scroll" href="#pricing">Progetto</a>
+            <a class="nav-link page-scroll" href="{{ site.t[page.lang].home | prepend: site.baseurl | prepend: site.url }}#pricing">
+                {% if page.lang == 'it' %}
+                    Progetto
+                {% else if page.lang == 'en' %}
+                    Project
+                {% endif %}
+            </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link page-scroll" href="#blog">Blog</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link page-scroll" href="#chat">Chat</a>
+            <a class="nav-link page-scroll" href="{{ site.t[page.lang].home | prepend: site.baseurl | prepend: site.url }}#blog">Blog</a>
         </li>
     </ul>
 </nav>

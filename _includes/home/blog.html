@@ -18,8 +18,8 @@
             <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 blog-item">
                 <div class="blog-item-wrapper">
                     <div class="blog-item-img">
-                        <a href="{{ post.url }}">
-                            <img src="img/posts/{{ post.img }}" alt="blog" title="blog">
+                        <a href="{{ post.url | prepend: site.baseurl | prepend: site.url }}">
+                            <img src="img/posts/{{ post.img }}" alt="{{ post.title }}" title="{{ post.title }}">
                         </a>
                     </div>
                     <div class="blog-item-text">
@@ -27,12 +27,12 @@
                             <span class="date"><i class="lnr lnr-clock"></i>{{ post.date | date: "%d/%m/%Y" }}</span>
                         </div>
                         <h3>
-                            <a href="single-post.html">{{ post.title }}</a>
+                            <a href="{{ post.url | prepend: site.baseurl | prepend: site.url }}">{{ post.title }}</a>
                         </h3>
                         <p class="testoblog">
                             {{ post.content | strip_html | truncatewords: 30 }}
                         </p>
-                        <a href="{{ post.url }}" class="btn-rm">Leggi <i class="lnr lnr-arrow-right"></i></a>
+                        <a href="{{ post.url | prepend: site.baseurl | prepend: site.url }}" class="btn-rm">Leggi <i class="lnr lnr-arrow-right"></i></a>
                     </div>
                 </div>
             </div>

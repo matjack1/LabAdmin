@@ -15,7 +15,7 @@ t:
         home: 'index_eng.html'
 
 baseurl: "/LabAdmin/"
-url: "https://officinearduinotorino.github.io/"
+url: "https://officinearduinotorino.github.io"
 twitter_username: jekyllrb
 github_username:  jekyll
 
