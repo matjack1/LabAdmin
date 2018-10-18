@@ -1,20 +1,28 @@
 <!DOCTYPE html>
 <html>
+    {% include head.html %}
 
-  {% include head.html %}
+    <body>
+        <header id="hero-area" data-stellar-background-ratio="0.5">
+            {% include header.html %}
 
-  <body>
+            <div class="container">
+                <div class="row justify-content-md-center">
+                    <div class="col-md-10">
+                        <div class="contents text-center">
+                            <p class="lead  wow fadeIn" data-wow-duration="1000ms" data-wow-delay="400ms">
+                                <h5>Realizza i tuoi progetti</h5>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
 
-    {% include header.html %}
+        <div class="spazio"></div>
 
-    <div class="page-content">
-      <div class="wrapper">
         {{ content }}
-      </div>
-    </div>
 
-    {% include footer.html %}
-
-  </body>
-
+        {% include footer.html %}
+    </body>
 </html>

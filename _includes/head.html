@@ -6,7 +6,23 @@
   <title>{% if page.title %}{{ page.title | escape }}{% else %}{{ site.title[page.lang] | escape }}{% endif %}</title>
   <meta name="description" content="{% if page.excerpt %}{{ page.excerpt | strip_html | strip_newlines | truncate: 160 }}{% else %}{{ site.description[page.lang] }}{% endif %}">
 
-  <link rel="stylesheet" href="{{ "/css/main.css" | prepend: site.baseurl }}">
+  <link rel="stylesheet" href="{{ "css/bootstrap.min.css" | prepend: site.baseurl }}">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+  <link rel="stylesheet" href="{{ "css/line-icons.css" | prepend: site.baseurl }}">
+  <link rel="stylesheet" href="{{ "css/owl.carousel.css" | prepend: site.baseurl }}">
+  <link rel="stylesheet" href="{{ "css/owl.theme.css" | prepend: site.baseurl }}">
+  <link rel="stylesheet" href="{{ "css/nivo-lightbox.css" | prepend: site.baseurl }}">
+  <link rel="stylesheet" href="{{ "css/magnific-popup.css" | prepend: site.baseurl }}">
+  <link rel="stylesheet" href="{{ "css/slicknav.css" | prepend: site.baseurl }}">
+  <link rel="stylesheet" href="{{ "css/animate.css" | prepend: site.baseurl }}">
+  <link rel="stylesheet" href="{{ "css/main.css" | prepend: site.baseurl }}">
+  <link rel="stylesheet" href="{{ "css/table.css" | prepend: site.baseurl }}">
+  <link rel="stylesheet" href="{{ "css/animate-table.css" | prepend: site.baseurl }}">
+  <link rel="stylesheet" href="{{ "css/perfect-scrollbar.css" | prepend: site.baseurl }}">
+  <link rel="stylesheet" href="{{ "css/select2.css" | prepend: site.baseurl }}">
+  <link rel="stylesheet" href="{{ "css/responsive.css" | prepend: site.baseurl }}">
+  <link rel="stylesheet" href="{{ "css/util.css" | prepend: site.baseurl }}">
+
   <link rel="canonical" href="{{ page.url | replace:'index.html','' | prepend: site.baseurl | prepend: site.url }}">
   {% assign posts=site.posts | where:"ref", page.ref | sort: 'lang' %}{% for post in posts %}
   <link rel="alternate" hreflang="{{ post.lang }}" href="{{ post.url }}" />{% endfor %}

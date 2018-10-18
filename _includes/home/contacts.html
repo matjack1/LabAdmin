@@ -1,0 +1,109 @@
+<div class="spazio"></div>
+
+<section id="features" class="section" data-stellar-background-ratio="0.2">
+    <div class="contenuto">
+        <div class="section-header">
+            <h2 class="section-title wow fadeIn" data-wow-duration="1000ms" data-wow-delay="0.3s">
+                {% if page.lang == 'it' %}
+                    Dove viene utilizzato
+                {% else if page.lang == 'en' %}
+                    Where it is used
+                {% endif %}
+            </h2>
+            <hr class="lines wow zoomIn" data-wow-delay="0.3s">
+            <p class="section-subtitle wow fadeIn" data-wow-duration="1000ms" data-wow-delay="0.3s">
+                {% if page.lang == 'it' %}
+                    Il Programma di Labadmin è utilizzato in molte città di tutta Italia. </br>
+                    Contestualmente a questo il sistema prevede anche un servizio di chat che permette agli utenti
+                    di comunicare attraverso il sistema, oltre che la possibilità di monitorare il comportamento
+                    delle macchine in funzione di manutenzione predittiva, per la gestione consumi e calcolo della
+                    marginalità economica utile al sostentamento di tutto l’ambiente.
+                {% else if page.lang == 'en' %}
+                    TRANSLATE ME!
+                {% endif %}
+            </p>
+        </div>
+
+        <div class="maps">
+            <div class="row">
+                <div class="col mappa">
+                    <iframe src="https://www.google.com/maps/d/embed?mid=1nZbpZ-hoA4OqSwuWgR9ZquXmB0oAoBWX" width="100%" height="100%"></iframe>
+                </div>
+                <div class="col">
+                    <div class="contact-block">
+                        <form id="contactForm" class="formmappa" novalidate="true" action="https://formspree.io/{{ site.email }}" method="POST">
+                            <div class="row insert">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" id="name" name="name" placeholder="Your Name" required="" data-error="Please enter your name">
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <input type="text" placeholder="Your Email" id="email" class="form-control" name="name" required="" data-error="Please enter your email">
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <input type="text" placeholder="City" id="email" class="form-control" name="name" required="" data-error="Please enter your city">
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <div class="col-sm">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="adoption" id="gridRadios1" value="Ho già adottato il sistema">
+                                                <label class="form-check-label" for="gridRadios1">
+                                                    {% if page.lang == 'it' %}
+                                                        Ho già adottato il sistema
+                                                    {% else if page.lang == 'en' %}
+                                                        I want to adopt the system
+                                                    {% endif %}
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="adoption" id="gridRadios2" value="Voglio adottare il sistema" checked="">
+                                                <label class="form-check-label" for="gridRadios2">
+                                                    {% if page.lang == 'it' %}
+                                                        Voglio adottare il sistema
+                                                    {% else if page.lang == 'en' %}
+                                                        I want to adopt the system
+                                                    {% endif %}
+                                                </label>
+                                            </div>
+                                        </div>
+
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <textarea class="form-control areatesto" id="message" placeholder="Your Message" rows="8" data-error="Write your message" required=""></textarea>
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+                                    <div class="submit-button text-center">
+                                        <button class="btn btn-danger  submit-form" id="submit" type="submit">
+                                            {% if page.lang == 'it' %}
+                                                Invia
+                                            {% else if page.lang == 'en' %}
+                                                Send
+                                            {% endif %}
+                                        </button>
+                                        <div id="msgSubmit" class="h3 text-center hidden"></div>
+                                        <div class="clearfix"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

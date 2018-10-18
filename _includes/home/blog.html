@@ -1,0 +1,41 @@
+<div class="spazio"></div>
+
+<section id="blog" class="section community">
+    <div class="section-header">
+        <h2 class="section-title">Blog</h2>
+        <hr class="lines">
+        <p class="section-subtitle">
+            {% if page.lang == 'it' %}
+                Se ci sono domande controlla il nostro Blog per vedere se abbiamo già risposto!
+            {% else if page.lang == 'en' %}
+                If you have any question, check the Blog to see if we already replied!
+            {% endif %}
+        </p>
+    </div>
+    <div class="row">
+        {% assign posts=site.posts | where:"lang", page.lang %}
+        {% for post in posts limit:3 %}
+            <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 blog-item">
+                <div class="blog-item-wrapper">
+                    <div class="blog-item-img">
+                        <a href="{{ post.url }}">
+                            <img src="img/posts/{{ post.img }}" alt="blog" title="blog">
+                        </a>
+                    </div>
+                    <div class="blog-item-text">
+                        <div class="meta-tags">
+                            <span class="date"><i class="lnr lnr-clock"></i>{{ post.date | date: "%d/%m/%Y" }}</span>
+                        </div>
+                        <h3>
+                            <a href="single-post.html">{{ post.title }}</a>
+                        </h3>
+                        <p class="testoblog">
+                            {{ post.content | strip_html | truncatewords: 30 }}
+                        </p>
+                        <a href="{{ post.url }}" class="btn-rm">Leggi <i class="lnr lnr-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</section>

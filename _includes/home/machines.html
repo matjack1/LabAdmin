@@ -1,0 +1,73 @@
+<div class="spazio"></div>
+
+<section id="portfolios" class="section">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">
+                {% if page.lang == 'it' %}
+                    MACCHINE
+                {% else if page.lang == 'en' %}
+                    MACHINES
+                {% endif %}
+            </h2>
+            <hr class="lines">
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="controls text-center">
+                    <a class="filter active btn btn-common" data-filter="all">
+                        {% if page.lang == 'it' %}
+                            Tutte
+                        {% else if page.lang == 'en' %}
+                            All
+                        {% endif %}
+                    </a>
+                    <a class="filter btn btn-common" data-filter=".stampanti">
+                        {% if page.lang == 'it' %}
+                            Stampanti 3D
+                        {% else if page.lang == 'en' %}
+                            3D Printers
+                        {% endif %}
+                    </a>
+                    <a class="filter btn btn-common" data-filter=".fresa">
+                        {% if page.lang == 'it' %}
+                            Fresa CNC
+                        {% else if page.lang == 'en' %}
+                            CNC Milling Machine
+                        {% endif %}
+                    </a>
+                    <a class="filter btn btn-common" data-filter=".laser">
+                        {% if page.lang == 'it' %}
+                            Taglio Laser
+                        {% else if page.lang == 'en' %}
+                            Laser Cut
+                        {% endif %}
+                    </a>
+                    <a class="filter btn btn-common" data-filter=".cutter">
+                        {% if page.lang == 'it' %}
+                            Cutter Plotter
+                        {% else if page.lang == 'en' %}
+                            Cutter Plotter
+                        {% endif %}
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="pino">
+            <div id="portfolio" class="row">
+                {% for machine in site.machines %}
+                    <div class="col-sm-6 col-md-4 col-lg-4 col-xl-4 mix {{ machine.category }}">
+                        <div class="portfolio-item">
+                            <div class="shot-item">
+                                <img src="img/macchine/{{ machine.img }}" alt="{{ machine.title }}"  title="{{ machine.title }}" />
+                                <a class="overlay lightbox" href="img/macchine/3d_1.png">
+                                    <i class="lnr lnr-eye item-icon"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
