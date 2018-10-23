@@ -26,10 +26,10 @@ t:
         project_title: IL NOSTRO LETTORE NFC
         project_description: Il nostro lettore posizionato ad ogni macchina da’ la possibilità alle vostre tessere di essere lette per sbloccare i macchinari e visualizzare i tuoi crediti.
         project_steps:
-            - Step 1: progettazioni con Tinkercad
-            - Step 2: un occhio per i dettagli
-            - Step 3: valutazione della stampa
-            - Step 4: comparazione del progetto
+            - "Step 1: progettazioni con Tinkercad"
+            - "Step 2: un occhio per i dettagli"
+            - "Step 3: valutazione della stampa"
+            - "Step 4: comparazione del progetto"
     en:
         title: 'LabAdmin'
         home: 'index_eng.html'
