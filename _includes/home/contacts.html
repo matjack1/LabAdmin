@@ -4,23 +4,11 @@
     <div class="contenuto">
         <div class="section-header">
             <h2 class="section-title wow fadeIn" data-wow-duration="1000ms" data-wow-delay="0.3s">
-                {% if page.lang == 'it' %}
-                    Dove viene utilizzato
-                {% else if page.lang == 'en' %}
-                    Where it is used
-                {% endif %}
+                {{ site.t[page.lang].contacts_title }}
             </h2>
             <hr class="lines wow zoomIn" data-wow-delay="0.3s">
             <p class="section-subtitle wow fadeIn" data-wow-duration="1000ms" data-wow-delay="0.3s">
-                {% if page.lang == 'it' %}
-                    Il Programma di Labadmin è utilizzato in molte città di tutta Italia. </br>
-                    Contestualmente a questo il sistema prevede anche un servizio di chat che permette agli utenti
-                    di comunicare attraverso il sistema, oltre che la possibilità di monitorare il comportamento
-                    delle macchine in funzione di manutenzione predittiva, per la gestione consumi e calcolo della
-                    marginalità economica utile al sostentamento di tutto l’ambiente.
-                {% else if page.lang == 'en' %}
-                    TRANSLATE ME!
-                {% endif %}
+                {{ site.t[page.lang].contacts_body }}
             </p>
         </div>
 
@@ -59,21 +47,13 @@
                                             <div class="form-check">
                                                 <input class="form-check-input" type="radio" name="adoption" id="gridRadios1" value="Ho già adottato il sistema">
                                                 <label class="form-check-label" for="gridRadios1">
-                                                    {% if page.lang == 'it' %}
-                                                        Ho già adottato il sistema
-                                                    {% else if page.lang == 'en' %}
-                                                        I want to adopt the system
-                                                    {% endif %}
+                                                    {{ site.t[page.lang].contacts_options[0] }}
                                                 </label>
                                             </div>
                                             <div class="form-check">
                                                 <input class="form-check-input" type="radio" name="adoption" id="gridRadios2" value="Voglio adottare il sistema" checked="">
                                                 <label class="form-check-label" for="gridRadios2">
-                                                    {% if page.lang == 'it' %}
-                                                        Voglio adottare il sistema
-                                                    {% else if page.lang == 'en' %}
-                                                        I want to adopt the system
-                                                    {% endif %}
+                                                    {{ site.t[page.lang].contacts_options[1] }}
                                                 </label>
                                             </div>
                                         </div>

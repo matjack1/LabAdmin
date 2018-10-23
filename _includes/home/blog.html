@@ -5,11 +5,7 @@
         <h2 class="section-title">Blog</h2>
         <hr class="lines">
         <p class="section-subtitle">
-            {% if page.lang == 'it' %}
-                Se ci sono domande controlla il nostro Blog per vedere se abbiamo già risposto!
-            {% else if page.lang == 'en' %}
-                If you have any question, check the Blog to see if we already replied!
-            {% endif %}
+            {{ site.t[page.lang].blog_title }}
         </p>
     </div>
     <div class="row">
@@ -32,7 +28,14 @@
                         <p class="testoblog">
                             {{ post.content | strip_html | truncatewords: 30 }}
                         </p>
-                        <a href="{{ post.url | prepend: site.baseurl | prepend: site.url }}" class="btn-rm">Leggi <i class="lnr lnr-arrow-right"></i></a>
+                        <a href="{{ post.url | prepend: site.baseurl | prepend: site.url }}" class="btn-rm">
+                            {% if page.lang == 'it' %}
+                                Leggi
+                            {% else if page.lang == 'en' %}
+                                Read
+                            {% endif %}
+                            <i class="lnr lnr-arrow-right"></i>
+                        </a>
                     </div>
                 </div>
             </div>

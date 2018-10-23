@@ -10,9 +10,49 @@ t:
     it:
         title: 'LabAdmin'
         home: 'index.html'
+        machines_title: Macchine
+        machines_filters:
+            - Tutte
+            - Stampanti 3D
+            - Fresa CNC
+            - Taglio Laser
+            - Cutter Plotter
+        contacts_title: Dove viene utilizzato
+        contacts_body: Il Programma di Labadmin è utilizzato in molte città di tutta Italia.</br> Contestualmente a questo il sistema prevede anche un servizio di chat che permette agli utenti di comunicare attraverso il sistema, oltre che la possibilità di monitorare il comportamento delle macchine in funzione di manutenzione predittiva, per la gestione consumi e calcolo della marginalità economica utile al sostentamento di tutto l’ambiente.
+        contacts_options:
+            - Ho già adottato il sistema
+            - Voglio adottare il sistema
+        blog_title: Se ci sono domande controlla il nostro Blog per vedere se abbiamo già risposto!
+        project_title: IL NOSTRO LETTORE NFC
+        project_description: Il nostro lettore posizionato ad ogni macchina da’ la possibilità alle vostre tessere di essere lette per sbloccare i macchinari e visualizzare i tuoi crediti.
+        project_steps:
+            - Step 1: progettazioni con Tinkercad
+            - Step 2: un occhio per i dettagli
+            - Step 3: valutazione della stampa
+            - Step 4: comparazione del progetto
     en:
         title: 'LabAdmin'
         home: 'index_eng.html'
+        machines_title: Machines
+        machines_filters:
+            - All
+            - 3D Printers
+            - CNC Milling Machine
+            - Laser Cut
+            - Cutter Plotter
+        contacts_title: Where it is used
+        contacts_body: TODO TRADUCIMI
+        contacts_options:
+            - I have already adopted the system
+            - I want to adopt the system
+        blog_title: If you have any question, check the Blog to see if we already replied!
+        project_title: OUR NFC READER
+        project_description: TODO TRADUCIMI
+        project_steps:
+            - TODO TRADUCIMI
+            - TODO TRADUCIMI
+            - TODO TRADUCIMI
+            - TODO TRADUCIMI
 
 baseurl: "/LabAdmin/"
 url: "https://officinearduinotorino.github.io"
