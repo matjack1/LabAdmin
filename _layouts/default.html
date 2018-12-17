@@ -12,11 +12,7 @@
                         <div class="contents text-center">
                             <p class="lead  wow fadeIn" data-wow-duration="1000ms" data-wow-delay="400ms">
                                 <h5>
-                                    {% if page.lang == 'it' %}
-                                        Realizza i tuoi progetti
-                                    {% else if page.lang == 'en' %}
-                                        Realize your projects
-                                    {% endif %}
+                                          {{ site.t[page.lang].claim }}
                                 </h5>
                             </p>
                         </div>

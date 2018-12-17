@@ -1,0 +1,10 @@
+---
+layout: post
+title:  "Creare un Server Labadmin"
+ref: server
+date:   2018-11-29 09:48:44 +0100
+categories: Tutorials
+lang: it
+img: blog2.jpg
+---
+Come creare un Server in locale su cui hostare Labadmin

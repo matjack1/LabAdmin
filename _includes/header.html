@@ -21,15 +21,19 @@
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link page-scroll" href="{{ site.t[page.lang].home | prepend: site.baseurl | prepend: site.url }}#blog">Blog</a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link page-scroll" href="{{ site.t[page.lang].home | prepend: site.baseurl | prepend: site.url }}#features">
                         {% if page.lang == 'it' %}
-                            Dov'è
+                            Chi lo usa
                         {% else if page.lang == 'en' %}
-                            Where Is
+                            Who's using it
                         {% endif %}
                     </a>
                 </li>
-                <li class="nav-item">
+
+                <!-- <li class="nav-item">
                     <a class="nav-link page-scroll" href="{{ site.t[page.lang].home | prepend: site.baseurl | prepend: site.url }}#portfolios">
                         {% if page.lang == 'it' %}
                             Macchine
@@ -46,10 +50,7 @@
                             Project
                         {% endif %}
                     </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link page-scroll" href="{{ site.t[page.lang].home | prepend: site.baseurl | prepend: site.url }}#blog">Blog</a>
-                </li>
+                </li> -->
                 <li class="nav-item lingue">
                     <a class="nav-link page-scroll flag {% if page.lang == 'it' %}qui{% endif %}" href="{{ "index.html" | prepend: site.baseurl | prepend: site.url }}">ITA</a>
                 </li>

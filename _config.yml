@@ -10,19 +10,19 @@ t:
     it:
         title: 'LabAdmin'
         home: 'index.html'
-        machines_title: Macchine
+        machines_title: Macchine & Porte
         machines_filters:
             - Tutte
             - Stampanti 3D
             - Fresa CNC
             - Taglio Laser
             - Cutter Plotter
-        contacts_title: Dove viene utilizzato
-        contacts_body: Il Programma di Labadmin è utilizzato in molte città di tutta Italia.</br> Contestualmente a questo il sistema prevede anche un servizio di chat che permette agli utenti di comunicare attraverso il sistema, oltre che la possibilità di monitorare il comportamento delle macchine in funzione di manutenzione predittiva, per la gestione consumi e calcolo della marginalità economica utile al sostentamento di tutto l’ambiente.
+        contacts_title: Lo uso! / Voglio usarlo!
+        contacts_body: Usi Labadmin? Se ce lo dici ci aiuta a mettere una bandierina sulla nostra mappa. Seguici anche sui social!
         contacts_options:
-            - Ho già adottato il sistema
-            - Voglio adottare il sistema
-        blog_title: Se ci sono domande controlla il nostro Blog per vedere se abbiamo già risposto!
+            - Sto usando LA
+            - Sono interessato ad usare LA
+        blog_title: Info su Labadmin
         project_title: IL NOSTRO LETTORE NFC
         project_description: Il nostro lettore posizionato ad ogni macchina da’ la possibilità alle vostre tessere di essere lette per sbloccare i macchinari e visualizzare i tuoi crediti.
         project_steps:
@@ -30,6 +30,16 @@ t:
             - "Step 2: un occhio per i dettagli"
             - "Step 3: valutazione della stampa"
             - "Step 4: comparazione del progetto"
+        claim: Il tuo Laboratorio,</br > che dà i Numeri.
+        claim_2: OK, ma che cos'é?
+        claim_3: Labadmin è una soluzione hardware e software che permette ai tuoi utenti di accedere agli spazi ed alle macchine del tuo spazio <br /> Ad ogni utente viene assegnato uno username ed una tag NFC. Il sistema permette di monitorare il comportamento delle macchine in funzione di <b> manutenzione predittiva</b>, per <b>la gestione consumi e calcolo della marginalità economica utile al sostentamento del Laboratorio</b>. <br /> Il laboratorio stesso può decidere di <b>vendere o mettere in paglio i crediti</b>, o <b>riconoscerne una parte a singoli o aziende che hanno deciso di condividere macchine o risorse con il laboratorio</b>
+        feature_1_Title: Accesso
+        feature_1_Content: All'utente sarà consentito l'ingresso agli spazi disponibili per poter lavorare con le macchine messe in condivisione nel laboratorio.
+        feature_2_Title: Accensione
+        feature_2_Content: Attraverso l'uso di una tessera NFC sarà possibile attivare le macchine all'interno della struttura
+        feature_3_Title: Crediti
+        feature_3_Content: All'uso di ogni macchina é assegnato un costo definito dal Laboratorio, che viene scalato con l'uso delle macchine.
+
     en:
         title: 'LabAdmin'
         home: 'index_eng.html'
@@ -40,12 +50,12 @@ t:
             - CNC Milling Machine
             - Laser Cut
             - Cutter Plotter
-        contacts_title: Where it is used
-        contacts_body: TODO TRADUCIMI
+        contacts_title: I'm using this! / I'm planning to use this.
+        contacts_body: Are you using LA? If you are shareing this information you are helping this project by adding a new little flag on our map!
         contacts_options:
-            - I have already adopted the system
-            - I want to adopt the system
-        blog_title: If you have any question, check the Blog to see if we already replied!
+            - I'm using LA
+            - I'm planning to giving it a try
+        blog_title: Latest info on LabAdmin!
         project_title: OUR NFC READER
         project_description: TODO TRADUCIMI
         project_steps:
@@ -53,6 +63,15 @@ t:
             - TODO TRADUCIMI
             - TODO TRADUCIMI
             - TODO TRADUCIMI
+        claim: Your Lab,</br > in numbers :).
+        claim_2: OK, but what's this?
+        claim_3: Labadmin is an open-source, self-hosted solution aimed to let you dispose and coordinate <br /> the access and the use of the machines of your coworking / lab space. Each user's given a username and a NFC tag. The system tracks the use of the machines for **manutenzione predittiva**, managing the electricity consumption addressing economical sustainability of the lab. <br /> Each laboratory is free to sell or gift credits to users of companies willing to share their machines.
+        feature_1_Title: Access
+        feature_1_Content: Users are given the possibility to get into the space without the presence of the lab manager
+        feature_2_Title: Machines
+        feature_2_Content: Users would turn on / off machines using their code / NFC tag.
+        feature_3_Title: Credits
+        feature_3_Content: Each Machine has an hourly cost, lab-defined. Credits get lowered by the time Users use a specific machine.
 
 baseurl: "/LabAdmin/"
 url: "https://officinearduinotorino.github.io"
